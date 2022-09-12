@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            COVID-19
+        </title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav>
+            <h1>Deaths</h1>
+        </nav>
+        
+        <table>
+            <tr>
+                <td><b>Get the number of total deaths for the chosen country until today</b></td>
+            </tr>
+            <tr>
+                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country1"></td>
+                        </tr>   
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <br>
+            <tr>
+                <td><b>Get the number of deaths today for the chosen country</b></td>
+            </tr>
+            <tr>
+                <form action="/getTodayDeaths" method="post" name="getTodayDeaths" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country2"></td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <tr>
+                <td><b>Get the average daily deaths for the chosen country</b></td>
+            </tr>
+            <tr>
+                <form action="/getAverage " method="post" name="getAverage" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country3"></td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+        </table>
+        <form action="/home" method='get' name=home>
+            <table >
+                <input type="submit" value="Home" style="height: 40px; width: 120px;font-size:22px; position: absolute; right: 320px;">
+            </table>
+        </form>
+        <br>
+        <iframe name="result" frameborder="0" width="80%" height="500"></iframe>
+    </body>
+</html>

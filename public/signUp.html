@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            COVID-19
+        </title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav>
+            <h1>Sign Up</h1>
+        </nav>
+        <form action="/signUp" method="POST" enctpe="multipart/from-data" name="signup" target="result">
+            <table>
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" name="Username"></td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td><input type="text" name="Password"></td>
+
+                </tr>
+                <tr>
+                    <td>Confirm Password:</td>
+                    <td><input type="text" name="ConfirmPassword"></td>
+                </tr>
+                <tr>
+                    <td>Do you want to be an Admin?</td>
+                    <td>
+                        <input type="checkbox" id="isAdmin" name="isAdmin">
+                    </td>
+                </tr>
+                <tr>
+                </tr>
+            </table>
+            <input type="submit" value="Sign Up">
+        </form>
+        <table>
+            <tr><td><iframe name="result" width="500" height="100" frameBorder="0" ></iframe></td></tr>
+            <tr><td><a href="/login.html">Back to login page</a></td></tr>
+        </table>
+    </body>
+</html>

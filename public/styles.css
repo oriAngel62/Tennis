@@ -1,0 +1,37 @@
+body {
+    background-image: url("covid2.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    font-family:'verdana';
+    /* 'Noto Serif', serif; */
+}
+
+nav {
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 3em;
+    text-align: center;
+    color: red;
+}
+
+nav h1 {
+    font-size:55px;
+    /* font-size: 3em; */
+    text-align: center;
+}
+
+
+h3 {
+    font-size: 2em;
+    text-align: center;
+}

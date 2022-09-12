@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            COVID-19
+        </title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav>
+            <h1 >Welcome to COVID-19 Information-System</h1>
+        </nav>
+        <form action="/login" method="post"  name="loginWindow" target="_self" >
+            <table>
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" name="Username"></td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td><input type="password" name="Password" id="pass"></td>
+
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="checkbox" onclick="myFunction()">Show password</td>
+                    <script>
+                        function myFunction() {
+                          var x = document.getElementById("pass");
+                          if (x.type === "password") {
+                            x.type = "text";
+                          } else {
+                            x.type = "password";
+                          }
+                        }
+                    </script>
+                </tr>
+                <tr></tr>
+                <tr>
+
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>In case you are an admin, check if you want to login as an admin</td>
+                    <td>
+                        <input type="checkbox" id="logInAsAdmin" name="logInAsAdmin">
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <input type="submit" value="Login">
+        </form>
+        <table>
+            <tr>
+                <td>Don't you have an account?</td>
+                <td><a href="/signUp.html"> Sign Up</a></td>
+            </tr>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            COVID-19
+        </title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    </head>
+    <body>
+        <nav>
+            <h1>Infections</h1>
+        </nav>
+        <table>
+            <tr>
+                <td><b>Get the number of infected people in the chosen country until today</b></td>
+            </tr>
+            <tr>
+                <form action="/getTotalInfected" method="post" name="getTotalInfected" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country1"></td>
+                        </tr>   
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <br>
+            <tr>
+                <td><b>Get the number of infected people per variant until today</b></td>
+            </tr>
+            <tr>
+                <form action="/getInfectedPerVariant" method="post" name="getInfectedPerVariant" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country2"></td>
+                            <td>                        
+                                <select required id="variant-selection" name="variants">
+                                    <option value="" disabled selected>Variant</option>
+                                    <option value="1" name="Alpha">Alpha</option>
+                                    <option value="2" name="B.1.1.277">B.1.1.277</option>
+                                    <option value="3" name="B.1.1.302">B.1.1.302</option>
+                                    <option value="4" name="B.1.1.519">B.1.1.519</option>
+                                    <option value="5" name="B.1.160">B.1.160</option>
+                                    <option value="6" name="B.1.177">B.1.177</option>
+                                    <option value="7" name="B.1.221">B.1.221</option>
+                                    <option value="8" name="B.1.258">B.1.258</option>
+                                    <option value="9" name="B.1.367">B.1.367</option>
+                                    <option value="10" name="B.1.620">B.1.620</option>
+                                    <option value="11" name="Beta">Beta</option>
+                                    <option value="12" name="Delta">Delta</option>
+                                    <option value="13" name="Epsilon">Epsilon</option>
+                                    <option value="14" name="Eta">Eta</option>
+                                    <option value="15" name="Gamma">Gamma</option>
+                                    <option value="16" name="Iota">Iota</option>
+                                    <option value="17" name="Kappa">Kappa</option>
+                                    <option value="18" name="Lambda">Lambda</option>
+                                    <option value="19" name="Mu">Mu</option>
+                                    <option value="20" name="Omicron">Omicron</option>
+                                    <option value="21" name="S:677H.Robin1">S:677H.Robin1</option>
+                                    <option value="22" name="S:677P.Pelican">S:677P.Pelican</option>
+                                    <option value="23" name="others">others</option>
+                                    <option value="24" name="non_who">non_who</option>
+                                </select>
+                            </td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <tr>
+                <td><b>Get the Average daily infections cases for the chosen country</b></td>
+            </tr>
+            <tr>
+                <form action="/getAverageCases" method="post" name="getAverageCases" target="result">
+                    <table>
+                        <tr>
+                            <td>Country:</td>
+                            <td><input type="text" name="Country3"></td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <form action="/home" method='get' name=home>
+                <table >
+                    <input type="submit" value="Home" style="height: 40px; width: 120px;font-size:22px; position: absolute; right: 320px;">
+                </table>
+            </form>
+        </table>
+        <br>
+        <iframe name="result" frameborder="0" width="80%" height="500" ></iframe>
+    </body>
+</html>
