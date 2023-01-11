@@ -3,8 +3,8 @@ const express = require("express");
 const path = require("path");
 const doQueries = require("../model/doQueries.js");
 
-app.listen(3000);
 const app = express();
+app.listen(3000);
 
 app.use(
     express.urlencoded({
