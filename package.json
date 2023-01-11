@@ -1,5 +1,5 @@
 {
-  "name": "covid-information-system",
+  "name": "tennis-information-system",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AmitaiYacobi/COVID-Information-system.git"
+    "url": "git+https://github.com/oriAngel62/TennisDB"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AmitaiYacobi/COVID-Information-system/issues"
+    "url": "https://github.com/oriAngel62/TennisDB/issues"
   },
-  "homepage": "https://github.com/AmitaiYacobi/COVID-Information-system#readme",
+  "homepage": "https://github.com/oriAngel62/TennisDB#readme",
   "dependencies": {
     "express": "^4.18.2",
     "express-fileupload": "^1.2.1",
