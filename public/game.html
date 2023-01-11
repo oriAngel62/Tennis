@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            COVID-19
+        </title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav>
+            <h1>Game</h1>
+        </nav>
+        
+        <table>
+            <tr>
+                <td><b>Get games between 2 players:</b></td>
+            </tr>
+            <tr>
+                <form action="/getGames" method="post" name="getGames" target="result">
+                    <table>
+                        <tr>
+                            <td>Player1:</td>
+                            <td><input type="text" name="Player1"></td>
+                            <td>Player2:</td>
+                            <td><input type="text" name="Player2"></td>
+                        </tr>   
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <br>
+            <tr>
+                <td><b>Get comments to game:</b></td>
+            </tr>
+            <tr>
+                <form action="/getTodayDeaths" method="post" name="getTodayDeaths" target="result">
+                    <table>
+                        <tr>
+                            <td>Game id:</td>
+                            <td><input type="text" name="Country2"></td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <tr>
+                <td><b>Add comment to game:</b></td>
+            </tr>
+            <tr>
+                <form action="/getAverage " method="post" name="getAverage" target="result">
+                    <table>
+                        <tr>
+                            <td>Match id:</td>
+                            <td><input type="text" name="Country3"></td>
+                        </tr>  
+                        <tr>
+                            <td>User id</td>
+                            <td><input type="text" name="Country3"></td>
+                        </tr>  
+                        <tr>
+                            <td>comment:</td>
+                            <td><input type="text" name="Country3"></td>
+                        </tr>      
+                    </table>
+                    <input type="submit" value="Post">
+                </form>
+            </tr>
+            <br>
+            <td><b>Show Favorite Player:</b></td>
+            <tr>
+                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                    <!-- <table>
+                        <tr>
+                            <td>Player1:</td>
+                            <td><input type="text" name="Player1"></td>
+                            <td>Player2:</td>
+                            <td><input type="text" name="Player2"></td>
+                        </tr>   
+                    </table> -->
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <td><b>Find common users:</b></td>
+            <tr>
+                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                    <table>
+                        <tr>
+                            <td>PlayerName:</td>
+                            <td><input type="text" name="Player1"></td>
+                            <td>Height:</td>
+                            <td><input type="text" name="Player2"></td>
+                            <td>Hand:</td>
+                            <td><input type="text" name="Player2"></td>
+                            <td>Country:</td>
+                            <td><input type="text" name="Player2"></td>
+                        </tr>   
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <td><b>Find top players:</b></td>
+            <tr>
+                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                    <table>
+                        <tr>
+                            <td>Rank:</td>
+                            <td><input type="text" name="Player1"></td>                   
+                        </tr>   
+                    </table>
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+            <br>
+            <td><b>Top countries:</b></td>
+            <tr>
+                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                    <!-- <table>
+                        <tr>
+                            <td>Player1:</td>
+                            <td><input type="text" name="Player1"></td>
+                            <td>Player2:</td>
+                            <td><input type="text" name="Player2"></td>
+                        </tr>   
+                    </table> -->
+                    <input type="submit" value="Get">
+                </form>
+            </tr>
+            <br>
+        </table>
+        <form action="/home" method="get" name="home">
+            <table >
+                <input type="submit" value="Home" style="height: 40px; width: 120px;font-size:22px; position: absolute; right: 320px;">
+            </table>
+        </form>
+        <br>
+        <iframe name="result" frameborder="0" width="80%" height="500"></iframe>
+    </body>
+</html>
