@@ -10,7 +10,7 @@
         <nav>
             <h1>Game</h1>
         </nav>
-        
+        <h1 id = "username"></h1>
         <table>
             <tr>
                 <td><b>Get games between 2 players:</b></td>
@@ -34,11 +34,11 @@
                 <td><b>Get comments to game:</b></td>
             </tr>
             <tr>
-                <form action="/getTodayDeaths" method="post" name="getTodayDeaths" target="result">
+                <form action="/getComments" method="post" name="getComments" target="result">
                     <table>
                         <tr>
                             <td>Game id:</td>
-                            <td><input type="text" name="Country2"></td>
+                            <td><input type="text" name="GameID"></td>
                         </tr>      
                     </table>
                     <input type="submit" value="Get">
@@ -49,36 +49,28 @@
                 <td><b>Add comment to game:</b></td>
             </tr>
             <tr>
-                <form action="/getAverage " method="post" name="getAverage" target="result">
+                <form action="/insertComment " method="post" name="insertComment" target="result">
                     <table>
                         <tr>
                             <td>Match id:</td>
-                            <td><input type="text" name="Country3"></td>
+                            <td><input type="text" name="MatchID"></td>
                         </tr>  
                         <tr>
-                            <td>User id</td>
-                            <td><input type="text" name="Country3"></td>
+                            <td>User Name</td>
+                            <td><input type="text" name="UserName"></td>
                         </tr>  
                         <tr>
                             <td>comment:</td>
-                            <td><input type="text" name="Country3"></td>
+                            <td><input type="text" name="Comment"></td>
                         </tr>      
                     </table>
                     <input type="submit" value="Post">
                 </form>
             </tr>
             <br>
-            <td><b>Show Favorite Player:</b></td>
+            <td><b>Get Favorite Player:</b></td>
             <tr>
-                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
-                    <!-- <table>
-                        <tr>
-                            <td>Player1:</td>
-                            <td><input type="text" name="Player1"></td>
-                            <td>Player2:</td>
-                            <td><input type="text" name="Player2"></td>
-                        </tr>   
-                    </table> -->
+                <form action="/getFavoritePlayer" method="post" name="getFavoritePlayer" target="result">
                     <input type="submit" value="Get">
                 </form>
             </tr>

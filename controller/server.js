@@ -19,26 +19,12 @@ app.get("/", (req, res) => {
 app.post("/login", (req, res) => {
     var userName = req.body.Username;
     var password = req.body.Password;
-    let loginAsAdmin = req.body.logInAsAdmin;
 
     var isLoggedIn = doQueries.login(userName, password);
     if (isLoggedIn) {
-        isAdmin = doQueries.isAdmin(userName);
-        if (isAdmin) {
-            if (loginAsAdmin === "on") {
-                res.sendFile(
-                    path.join(__dirname, "../public", "adminMainWindow.html")
-                );
-            } else {
-                res.sendFile(
-                    path.join(__dirname, "../public", "userMainWindow.html")
-                );
-            }
-        } else {
-            res.sendFile(
-                path.join(__dirname, "../public", "userMainWindow.html")
-            );
-        }
+
+        res.cookie("username", userName, {maxAge: 900000, httpOnly: true});
+        res.sendFile(path.join(__dirname, "../public", "game.html"));
     } else {
         res.write("Username or password are incorrect");
         res.end();
@@ -49,17 +35,17 @@ app.post("/signUp", (req, res) => {
     let userName = "'" + req.body.Username + "'";
     let password = "'" + req.body.Password + "'";
     let confirm = "'" + req.body.ConfirmPassword + "'";
-    let isAdmin = req.body.isAdmin;
+    let country = "'" + req.body.Country  + "'";;
+    let age = "'" + req.body.Age + "'";
+    let favorite = "'" + req.body.FavoritePlayer + "'";
+    let phone = "'" + req.body.PhoneNumber + "'";
 
     if (password !== confirm) {
         res.write("Passwords doesn't match! Please try again.");
         res.end();
-    } else {
-        if (isAdmin === "on") isAdmin = 1;
-        else isAdmin = 0;
     }
 
-    let message = doQueries.signUp(userName, password, isAdmin);
+    let message = doQueries.signUp(userName, password, country,age,favorite, phone );
     if (message === "Username already is use!") {
         res.write(writeInHtml(message));
         res.end();
@@ -72,18 +58,6 @@ app.post("/signUp", (req, res) => {
 
 app.get("/game", (req, res) => {
     res.sendFile(path.join(__dirname, "../public", "game.html"));
-});
-
-app.get("/deaths", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public", "deaths.html"));
-});
-
-app.get("/vaccinations", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public", "game.html"));
-});
-
-app.get("/home", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public", "userMainWindow.html"));
 });
 
 app.post("/getGames", (req, res) => {
@@ -100,6 +74,37 @@ app.post("/getGames", (req, res) => {
         res.end();
     }
 });
+
+app.post("/getComments", (req, res) => {
+    let gameID = req.body.GameID;
+    let commends = doQueries.getComments(gameID);
+    if (commends === false) {
+        let result = writeInHtml("We have no information for this game");
+        res.write(result);
+        res.end();
+    } else {
+        let result = writeInHtml(commends);
+        res.write(result);
+        res.end();
+    }
+});
+
+
+app.post("/getFavoritePlayer", (req, res) => {
+    let favorite = doQueries.getFavoritePlayer();
+    if (favorite === false) {
+        let result = writeInHtml("We have no information for this game");
+        res.write(result);
+        res.end();
+    } else {
+        let result = writeInHtml(favorite);
+        res.write(result);
+        res.end();
+    }
+});
+
+
+
 
 app.post("/getTotalDeaths", (req, res) => {
     let country = req.body.Country1;
@@ -338,3 +343,18 @@ function writeInHtml(text) {
         `<p style="font-size:30px; font-family:'verdana';">` + text + `</p>`;
     return result;
 }
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }

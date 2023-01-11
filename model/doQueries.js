@@ -9,7 +9,7 @@ const config = new syncSql({
 
 function login(userName, password) {
     let loginQuery =
-    "SELECT user_name FROM User WHERE user_name =? and password =?"
+        "SELECT user_name FROM user WHERE user_name =? and password =?";
     try {
         var result = config.query(loginQuery, [userName, password]);
     } catch {
@@ -21,33 +21,106 @@ function login(userName, password) {
     return false;
 }
 
-// function isAdmin(userName) {
-//     let isAdminQuery = "SELECT is_admin FROM covid_db.users WHERE username =?";
-//     var result = config.query(isAdminQuery, [userName]);
-//     if (result[0] === undefined) return false;
-//     res = result[0].is_admin;
-//     if (res === 1) return true;
-//     return false;
-// }
-
-function signUp(userName, password, isAdmin) {
+function signUp(
+    userName,
+    password,
+    country,
+    age,
+    favorite_player,
+    phone_number
+) {
     let signUpQuery =
-        "INSERT INTO covid_db.users(username, password, is_admin)" +
+        "INSERT INTO user(user_name, password, country, age, favorite_player, phone_number)" +
         "VALUES (" +
         userName +
         "," +
         password +
         "," +
-        isAdmin +
+        country +
+        "," +
+        age +
+        "," +
+        favorite_player +
+        "," +
+        phone_number +
         ")";
     try {
         config.query(signUpQuery);
     } catch (error) {
+        // check if user already in use
         if (error.code === "ER_DUP_ENTRY") return "Username already is use!";
         return false;
     }
     return "You are signed up!";
 }
+
+//Return the games 
+function getGames(player1, player2) {
+    let getGames =
+        "SELECT * From Matches WHERE (player_1 = ? player1 AND player_2 = ?) OR (player_1 = ? AND player_2 = ?) LIMIT 10";
+
+    var table = [];
+    var result = config.query(getGames, [player1, player2]);
+    if (result[0] === undefined) return false;
+    Object.keys(result).forEach(function (key) {
+        table.push(Object.values(result[key]));
+    });
+    return table;
+}
+
+
+function getComments(gameID) {
+    let getGames =
+        "SELECT user_id,comment From Comments WHERE match_id = ?";
+    var table = [];
+    var result = config.query(getGames, [gameID]);
+    if (result[0] === undefined) return false;
+    Object.keys(result).forEach(function (key) {
+        table.push(Object.values(result[key]));
+    });
+    return table;
+}
+
+
+
+function insertComment(userName, userId, comment) {
+    let insertComment =
+        "INSERT INTO Comment(match_id, user_id, comment)" +
+        "VALUES (" +
+        userName +
+        "," +
+        userId +
+        "," +
+        comment +
+        ")";
+    try {
+        config.query(insertComment);
+        return "Succeeded";
+    } catch (error) {
+        if (error.code === "ER_DUP_ENTRY") {
+            return "not succeed";
+        }
+    }
+}
+
+
+//need to check how to write
+function getFavoritePlayer(username,favorite) {
+    let playerName =
+        "SELECT player_name FROM User where user_name =?";
+    var table = [];
+    var result = config.query(getGames, [username]);
+    if (result[0] === undefined) return false;
+
+    let favoritrPlayer =
+    "SELECT * FROM player where player_name in (SELECT player_name FROM User where user_name =?)";
+    var result2 = config.query(getGames, [playerName]);
+   
+    return result2;
+}
+
+
+
 
 // Admin Update Query
 function updateInfectionCasesQuery(location, date, variant, daily_cases) {
@@ -98,40 +171,6 @@ function insertManufacturer(manufacturer_name) {
     }
 }
 
-function insertVariant(variant_id, variant_name) {
-    let insertVariantQuery =
-        `INSERT INTO covid_db.variants(variant_id ,variant_name)
-                             VALUES(` +
-        variant_id +
-        `, '` +
-        variant_name +
-        `');`;
-    try {
-        config.query(insertVariantQuery);
-        return "Succeeded";
-    } catch (error) {
-        if (error.code === "ER_DUP_ENTRY") {
-            return "not succeed";
-        }
-    }
-}
-
-//Return the total number of deaths for the location they gave
-function getTotalDeathsQuery(location) {
-    let getTotalDeathsQuery =
-        `select sum(new_deaths) 
-                                from covid_db.death_cases 
-                                where location like '` +
-        location +
-        `' group by location;`;
-    var table = [];
-    var result = config.query(getTotalDeathsQuery);
-    if (result[0] === undefined) return false;
-    Object.keys(result).forEach(function (key) {
-        table.push(Object.values(result[key]));
-    });
-    return table;
-}
 
 //Return the number of deaths in the latest day for the location they gave
 function getNumberDeathsLatestDayQuery(location) {
@@ -293,8 +332,15 @@ function createVariantMap() {
 }
 
 module.exports.login = login;
-module.exports.isAdmin = isAdmin;
 module.exports.signUp = signUp;
+
+module.exports.getGames = getGames;
+module.exports.getComments = getComments;
+module.exports.insertComment = insertComment;
+
+module.exports.getFavoritePlayer = getFavoritePlayer;
+
+
 module.exports.sumDailyCasesQueryByLocation = sumDailyCasesQueryByLocation;
 module.exports.getSumTotalVaccinationsByLocation =
     getSumTotalVaccinationsByLocation;
@@ -309,6 +355,5 @@ module.exports.getNumberDeathsLatestDayQuery = getNumberDeathsLatestDayQuery;
 module.exports.sumDailyCasesQueryByLocationAndVariant =
     sumDailyCasesQueryByLocationAndVariant;
 module.exports.updateInfectionCasesQuery = updateInfectionCasesQuery;
-module.exports.insertVariant = insertVariant;
 module.exports.insertManufacturer = insertManufacturer;
 module.exports.createVariantMap = createVariantMap;
