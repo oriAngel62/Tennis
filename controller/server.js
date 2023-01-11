@@ -26,6 +26,7 @@ app.post("/login", (req, res) => {
     if (isLoggedIn != null) {
         res.cookie("username",result[0].username , { maxAge: 900000, httpOnly: true });
         res.cookie("userID",result[0].user_id , { maxAge: 900000, httpOnly: true });
+        res.cookie("playerID",result[0].Favorite_player , { maxAge: 900000, httpOnly: true });
         res.sendFile(path.join(__dirname, "../public", "game.html"));
     } else {
         res.write("Username or password are incorrect");
@@ -132,7 +133,7 @@ app.post("/getCommonUsers", (req, res) => {
 });
 
 app.post("/getTopPlayers", (req, res) => {
-    let getTopPlayers = doQueries.getTopPlayers();
+    let getTopPlayers = doQueries.getTopPlayers(getCookie("playerID"));
     if (getTopPlayers === false) {
         let result = writeInHtml("We have no information");
         res.write(result);

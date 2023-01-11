@@ -48,6 +48,7 @@ function signUp(
         config.query(signUpQuery);
     } catch (error) {
         // check if user already in use
+    
         if (error.code === "ER_DUP_ENTRY") return "Username already is use!";
         return false;
     }
@@ -136,7 +137,7 @@ function getCommonUsers(first, last, height, hand, nationality) {
     return table;
 }
 
-function getTopPlayers(rank) {
+function getTopPlayers(playerID) {
     let getTopPlayer =
         "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
 
