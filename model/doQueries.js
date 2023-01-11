@@ -13,12 +13,12 @@ function login(userName, password) {
     try {
         var result = config.query(loginQuery, [userName, password]);
     } catch {
-        return false;
+        return null;
     }
-    if (result[0] === undefined) return false;
+    if (result[0] === undefined) return null;
     let result_username = result[0].username;
-    if (userName === result_username) return true;
-    return false;
+    if (userName === result_username) return result[0];
+    return null;
 }
 
 function signUp(
@@ -54,7 +54,10 @@ function signUp(
     return "You are signed up!";
 }
 
-//Return the games 
+//input user name output user id
+
+
+//Return the games
 function getGames(player1, player2) {
     let getGames =
         "SELECT * From Matches WHERE (player_1 = ? player1 AND player_2 = ?) OR (player_1 = ? AND player_2 = ?) LIMIT 10";
@@ -68,10 +71,8 @@ function getGames(player1, player2) {
     return table;
 }
 
-
 function getComments(gameID) {
-    let getGames =
-        "SELECT user_id,comment From Comments WHERE match_id = ?";
+    let getGames = "SELECT user_id,comment From Comments WHERE match_id = ?";
     var table = [];
     var result = config.query(getGames, [gameID]);
     if (result[0] === undefined) return false;
@@ -80,8 +81,6 @@ function getComments(gameID) {
     });
     return table;
 }
-
-
 
 function insertComment(userName, userId, comment) {
     let insertComment =
@@ -103,20 +102,52 @@ function insertComment(userName, userId, comment) {
     }
 }
 
-
 //need to check how to write
-function getFavoritePlayer(username,favorite) {
-    let playerName =
-        "SELECT player_name FROM User where user_name =?";
+function getFavoritePlayer(username, favorite) {
+    let playerName = "SELECT player_name FROM User where user_name =?";
     var table = [];
     var result = config.query(getGames, [username]);
     if (result[0] === undefined) return false;
 
     let favoritrPlayer =
-    "SELECT * FROM player where player_name in (SELECT player_name FROM User where user_name =?)";
+        "SELECT * FROM player where player_name in (SELECT player_name FROM User where user_name =?)";
     var result2 = config.query(getGames, [playerName]);
-   
+
     return result2;
+}
+
+//Return the games
+function getCommonUsers(first, last, height, hand, nationality) {
+    let getCommonUsers =
+        "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
+
+    var table = [];
+    var result = config.query(getCommonUsers, [
+        first,
+        last,
+        height,
+        hand,
+        nationality,
+    ]);
+    if (result[0] === undefined) return false;
+    Object.keys(result).forEach(function (key) {
+        table.push(Object.values(result[key]));
+    });
+    return table;
+}
+
+
+function getTopCountries(first, last, height, hand, nationality) {
+    let getTopCountries =
+        "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
+
+    var table = [];
+    var result = config.query(getTopCountries);
+    if (result[0] === undefined) return false;
+    Object.keys(result).forEach(function (key) {
+        table.push(Object.values(result[key]));
+    });
+    return table;
 }
 
 
@@ -170,7 +201,6 @@ function insertManufacturer(manufacturer_name) {
         if (error.code === "ER_DUP_ENTRY") return "Not succeeded";
     }
 }
-
 
 //Return the number of deaths in the latest day for the location they gave
 function getNumberDeathsLatestDayQuery(location) {
@@ -339,6 +369,10 @@ module.exports.getComments = getComments;
 module.exports.insertComment = insertComment;
 
 module.exports.getFavoritePlayer = getFavoritePlayer;
+module.exports.getCommonUsers = getCommonUsers;
+module.exports.getTopCountries = getTopCountries;
+
+
 
 
 module.exports.sumDailyCasesQueryByLocation = sumDailyCasesQueryByLocation;

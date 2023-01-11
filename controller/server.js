@@ -1,3 +1,4 @@
+const { assert } = require("console");
 const express = require("express");
 const path = require("path");
 const doQueries = require("../model/doQueries.js");
@@ -21,9 +22,9 @@ app.post("/login", (req, res) => {
     var password = req.body.Password;
 
     var isLoggedIn = doQueries.login(userName, password);
-    if (isLoggedIn) {
-
-        res.cookie("username", userName, {maxAge: 900000, httpOnly: true});
+    if (isLoggedIn != null) {
+        res.cookie("username",result[0].username , { maxAge: 900000, httpOnly: true });
+        res.cookie("userID",result[0].user_id , { maxAge: 900000, httpOnly: true });
         res.sendFile(path.join(__dirname, "../public", "game.html"));
     } else {
         res.write("Username or password are incorrect");
@@ -35,7 +36,7 @@ app.post("/signUp", (req, res) => {
     let userName = "'" + req.body.Username + "'";
     let password = "'" + req.body.Password + "'";
     let confirm = "'" + req.body.ConfirmPassword + "'";
-    let country = "'" + req.body.Country  + "'";;
+    let country = "'" + req.body.Country + "'";
     let age = "'" + req.body.Age + "'";
     let favorite = "'" + req.body.FavoritePlayer + "'";
     let phone = "'" + req.body.PhoneNumber + "'";
@@ -45,7 +46,14 @@ app.post("/signUp", (req, res) => {
         res.end();
     }
 
-    let message = doQueries.signUp(userName, password, country,age,favorite, phone );
+    let message = doQueries.signUp(
+        userName,
+        password,
+        country,
+        age,
+        favorite,
+        phone
+    );
     if (message === "Username already is use!") {
         res.write(writeInHtml(message));
         res.end();
@@ -89,7 +97,6 @@ app.post("/getComments", (req, res) => {
     }
 });
 
-
 app.post("/getFavoritePlayer", (req, res) => {
     let favorite = doQueries.getFavoritePlayer();
     if (favorite === false) {
@@ -103,6 +110,39 @@ app.post("/getFavoritePlayer", (req, res) => {
     }
 });
 
+app.post("/getCommonUsers", (req, res) => {
+    let first = req.body.PlayerFirstNameCommonUsers;
+    let last = req.body.PlayerLastNameCommonUsers;
+
+    let height = req.body.Hieght;
+
+    let nationality = req.body.NationalityCommon;
+
+    let commends = doQueries.getCommonUsers(first, last, height, nationality);
+    if (commends === false) {
+        let result = writeInHtml("We have no information");
+        res.write(result);
+        res.end();
+    } else {
+        let result = writeInHtml(commends);
+        res.write(result);
+        res.end();
+    }
+});
+
+
+app.post("/getTopCountries", (req, res) => {
+    let favorite = doQueries.getTopCountries();
+    if (favorite === false) {
+        let result = writeInHtml("We have no information");
+        res.write(result);
+        res.end();
+    } else {
+        let result = writeInHtml(favorite);
+        res.write(result);
+        res.end();
+    }
+});
 
 
 
@@ -294,7 +334,7 @@ app.post("/insertManufacturer", (req, res) => {
     res.end();
 });
 
-app.post("/insertVariant", (req, res) => {
+app.post("/insertComment", (req, res) => {
     let variant_id = req.body.variant_id;
     let variant_name = req.body.variant_name;
     result = doQueries.insertVariant(variant_id, variant_name);
@@ -346,15 +386,15 @@ function writeInHtml(text) {
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
+    var ca = decodedCookie.split(";");
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == " ") {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
     }
     return "";
-  }
+}

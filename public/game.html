@@ -56,10 +56,6 @@
                             <td><input type="text" name="MatchID"></td>
                         </tr>  
                         <tr>
-                            <td>User Name</td>
-                            <td><input type="text" name="UserName"></td>
-                        </tr>  
-                        <tr>
                             <td>comment:</td>
                             <td><input type="text" name="Comment"></td>
                         </tr>      
@@ -77,17 +73,19 @@
             <br>
             <td><b>Find common users:</b></td>
             <tr>
-                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                <form action="/getCommonUsers" method="post" name="getCommonUsers" target="result">
                     <table>
                         <tr>
-                            <td>PlayerName:</td>
-                            <td><input type="text" name="Player1"></td>
+                            <td>Player First Name:</td>
+                            <td><input type="text" name="PlayerFirstNameCommonUsers"></td>
+                            <td>Player Last Name:</td>
+                            <td><input type="text" name="PlayerLastNameCommonUsers"></td>
                             <td>Height:</td>
-                            <td><input type="text" name="Player2"></td>
+                            <td><input type="text" name="Height"></td>
                             <td>Hand:</td>
-                            <td><input type="text" name="Player2"></td>
-                            <td>Country:</td>
-                            <td><input type="text" name="Player2"></td>
+                            <td><input type="text" name="Hand"></td>
+                            <td>Nationality:</td>
+                            <td><input type="text" name="NationalityCommonUser"></td>
                         </tr>   
                     </table>
                     <input type="submit" value="Get">
@@ -96,7 +94,7 @@
             <br>
             <td><b>Find top players:</b></td>
             <tr>
-                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
+                <form action="/getTopCountries" method="post" name="getTotalDeaths" target="result">
                     <table>
                         <tr>
                             <td>Rank:</td>
@@ -108,17 +106,9 @@
             </tr>
             <br>
             <br>
-            <td><b>Top countries:</b></td>
+            <td><b>Get Top countries:</b></td>
             <tr>
-                <form action="/getTotalDeaths" method="post" name="getTotalDeaths" target="result">
-                    <!-- <table>
-                        <tr>
-                            <td>Player1:</td>
-                            <td><input type="text" name="Player1"></td>
-                            <td>Player2:</td>
-                            <td><input type="text" name="Player2"></td>
-                        </tr>   
-                    </table> -->
+                <form action="/getTopCountries" method="post" name="getTopCountries" target="result">
                     <input type="submit" value="Get">
                 </form>
             </tr>
