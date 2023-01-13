@@ -1,24 +1,31 @@
-const syncSql = require("sync-mysql");
+const syncSql = require('mysql');
 
-const config = new syncSql({
-    host: "localhost",
+const config = syncSql.createConnection({
+    host: "127.0.0.1",
     user: "root",
-    password: "sweetcandyA1!",
-    database: "covid_db",
+    password: "adjkadh34@fS",
+    database: "tennisdb"
 });
+config.connect(function(err) {
+    if ( err ) throw err
+    console.log("Connected to database as " + config.threadId)
+  }); 
 
 function login(userName, password) {
     let loginQuery =
-        "SELECT user_name FROM user WHERE user_name =? and password =?";
+        "SELECT user_name FROM user WHERE user_name = '" + userName +"' and password = '" + password+"'";
     try {
-        var result = config.query(loginQuery, [userName, password]);
+        config.query(loginQuery, function (err, results, fields) {
+            if (err) throw err;
+            if (results[0] === undefined) return null;
+            let result_username = results[0].username;
+            if (userName === result_username) return results[0];
+            return null;
+        })
     } catch {
+        console.log("catch");
         return null;
     }
-    if (result[0] === undefined) return null;
-    let result_username = result[0].username;
-    if (userName === result_username) return result[0];
-    return null;
 }
 
 function signUp(

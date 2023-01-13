@@ -24,9 +24,18 @@ app.post("/login", (req, res) => {
 
     var isLoggedIn = doQueries.login(userName, password);
     if (isLoggedIn != null) {
-        res.cookie("username",result[0].username , { maxAge: 900000, httpOnly: true });
-        res.cookie("userID",result[0].user_id , { maxAge: 900000, httpOnly: true });
-        res.cookie("playerID",result[0].Favorite_player , { maxAge: 900000, httpOnly: true });
+        res.cookie("username", result[0].username, {
+            maxAge: 900000,
+            httpOnly: true,
+        });
+        res.cookie("userID", result[0].user_id, {
+            maxAge: 900000,
+            httpOnly: true,
+        });
+        res.cookie("playerID", result[0].Favorite_player, {
+            maxAge: 900000,
+            httpOnly: true,
+        });
         res.sendFile(path.join(__dirname, "../public", "game.html"));
     } else {
         res.write("Username or password are incorrect");
@@ -145,7 +154,6 @@ app.post("/getTopPlayers", (req, res) => {
     }
 });
 
-
 app.post("/getTopCountries", (req, res) => {
     let favorite = doQueries.getTopCountries();
     if (favorite === false) {
@@ -159,7 +167,6 @@ app.post("/getTopCountries", (req, res) => {
     }
 });
 
-
 app.post("/insertComment", (req, res) => {
     let variant_id = req.body.variant_id;
     let variant_name = req.body.variant_name;
@@ -168,8 +175,6 @@ app.post("/insertComment", (req, res) => {
     res.write(text);
     res.end();
 });
-
-
 
 function createManufacturerMap() {
     dict = {};
