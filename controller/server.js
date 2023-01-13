@@ -108,6 +108,15 @@ app.post("/getComments", (req, res) => {
     }
 });
 
+app.post("/insertComment", (req, res) => {
+    let variant_id = req.body.variant_id;
+    let variant_name = req.body.variant_name;
+    result = doQueries.insertVariant(variant_id, variant_name);
+    let text = writeInHtml(result);
+    res.write(text);
+    res.end();
+});
+
 app.post("/getFavoritePlayer", (req, res) => {
     let favorite = doQueries.getFavoritePlayer();
     if (favorite === false) {
@@ -167,27 +176,7 @@ app.post("/getTopCountries", (req, res) => {
     }
 });
 
-app.post("/insertComment", (req, res) => {
-    let variant_id = req.body.variant_id;
-    let variant_name = req.body.variant_name;
-    result = doQueries.insertVariant(variant_id, variant_name);
-    let text = writeInHtml(result);
-    res.write(text);
-    res.end();
-});
 
-function createManufacturerMap() {
-    dict = {};
-    dict["Johnson&Johnson"] = 1;
-    dict["Moderna"] = 2;
-    dict["Oxford/AstraZeneca"] = 3;
-    dict["Pfizer/BioNTech"] = 4;
-    dict["Sinovac"] = 5;
-    dict["CanSino"] = 6;
-    dict["Sputnik V"] = 7;
-    dict["Sinopharm/Beijing"] = 8;
-    return dict;
-}
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find((key) => object[key] === value);

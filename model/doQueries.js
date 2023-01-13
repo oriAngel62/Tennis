@@ -1,19 +1,23 @@
-const syncSql = require('mysql');
+const syncSql = require("mysql");
 
 const config = syncSql.createConnection({
     host: "127.0.0.1",
     user: "root",
     password: "adjkadh34@fS",
-    database: "tennisdb"
+    database: "tennisdb",
 });
-config.connect(function(err) {
-    if ( err ) throw err
-    console.log("Connected to database as " + config.threadId)
-  }); 
+config.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected to database as " + config.threadId);
+});
 
 function login(userName, password) {
     let loginQuery =
-        "SELECT user_name FROM user WHERE user_name = '" + userName +"' and password = '" + password+"'";
+        "SELECT user_name FROM user WHERE user_name = '" +
+        userName +
+        "' and password = '" +
+        password +
+        "'";
     try {
         config.query(loginQuery, function (err, results, fields) {
             if (err) throw err;
@@ -21,7 +25,7 @@ function login(userName, password) {
             let result_username = results[0].username;
             if (userName === result_username) return results[0];
             return null;
-        })
+        });
     } catch {
         console.log("catch");
         return null;
@@ -36,34 +40,33 @@ function signUp(
     favorite_player,
     phone_number
 ) {
-    let signUpQuery =
-        "INSERT INTO user(user_name, password, country, age, favorite_player, phone_number)" +
-        "VALUES (" +
-        userName +
-        "," +
-        password +
-        "," +
-        country +
-        "," +
-        age +
-        "," +
-        favorite_player +
-        "," +
-        phone_number +
-        ")";
-    try {
-        config.query(signUpQuery);
-    } catch (error) {
-        // check if user already in use
-    
-        if (error.code === "ER_DUP_ENTRY") return "Username already is use!";
-        return false;
-    }
-    return "You are signed up!";
+    let checkUserExist = `SELECT user_name FROM user WHERE user_name = ${userName}`;
+    config.query(checkUserExist, function (err, results, fields) {
+        if (err) throw err;
+        if (results.length > 0) return "Username already is use!";
+        let signUpQuery =
+            "INSERT INTO user(user_name, password, country, age, favorite_player, phone_number)" +
+            "VALUES (" +
+            userName +
+            "," +
+            password +
+            "," +
+            country +
+            "," +
+            age +
+            "," +
+            favorite_player +
+            "," +
+            phone_number +
+            ")";
+        try {
+            config.query(signUpQuery);
+            return "You are signed up!";
+        } catch (error) {
+            return false;
+        }
+    });
 }
-
-//input user name output user id
-
 
 //Return the games
 function getGames(player1, player2) {
@@ -157,12 +160,9 @@ function getTopPlayers(playerID) {
     return table;
 }
 
-
-
-function getTopCountries(first, last, height, hand, nationality) {
+function getTopCountries() {
     let getTopCountries =
-        "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
-
+        "SELECT player.country, COUNT(matches.winner_id) AS wins FROM matches JOIN player ON player.player_id = matches.winner_id GROUP BY player.country ORDER BY wins DESC LIMIT 10;";
     var table = [];
     var result = config.query(getTopCountries);
     if (result[0] === undefined) return false;
@@ -171,7 +171,6 @@ function getTopCountries(first, last, height, hand, nationality) {
     });
     return table;
 }
-
 
 module.exports.login = login;
 module.exports.signUp = signUp;
@@ -184,5 +183,3 @@ module.exports.getFavoritePlayer = getFavoritePlayer;
 module.exports.getCommonUsers = getCommonUsers;
 module.exports.getTopPlayers = getTopPlayers;
 module.exports.getTopCountries = getTopCountries;
-
-
