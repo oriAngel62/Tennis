@@ -22,25 +22,30 @@ app.post("/login", (req, res) => {
     var userName = req.body.Username;
     var password = req.body.Password;
 
-    var isLoggedIn = doQueries.login(userName, password);
-    if (isLoggedIn != null) {
-        res.cookie("username", result[0].username, {
-            maxAge: 900000,
-            httpOnly: true,
-        });
-        res.cookie("userID", result[0].user_id, {
-            maxAge: 900000,
-            httpOnly: true,
-        });
-        res.cookie("playerID", result[0].Favorite_player, {
-            maxAge: 900000,
-            httpOnly: true,
-        });
-        res.sendFile(path.join(__dirname, "../public", "game.html"));
-    } else {
-        res.write("Username or password are incorrect");
-        res.end();
-    }
+    (async () => {
+        let isLoggedIn = await doQueries.login(userName, password);
+        console.log(isLoggedIn);
+        if (isLoggedIn != null) {
+            res.cookie("username", isLoggedIn.user_name, {
+                maxAge: 900000,
+                httpOnly: true,
+            });
+            res.cookie("userID", isLoggedIn.user_id, {
+                maxAge: 900000,
+                httpOnly: true,
+            });
+            res.cookie("playerID", isLoggedIn.Favorite_player, {
+                maxAge: 900000,
+                httpOnly: true,
+            });
+            res.sendFile(path.join(__dirname, "../public", "game.html"));
+        } else {
+            res.write("Username or password are incorrect");
+            res.end();
+        }
+      })();
+      
+    
 });
 
 app.post("/signUp", (req, res) => {
