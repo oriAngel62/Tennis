@@ -68,17 +68,33 @@ function signUp(
 }
 
 //Return the games
-function getGames(player1, player2) {
+async function getGames(player1, player2) {
     let getGames =
-        "SELECT * From Matches WHERE (player_1 = ? player1 AND player_2 = ?) OR (player_1 = ? AND player_2 = ?) LIMIT 10";
-
-    var table = [];
-    var result = config.query(getGames, [player1, player2]);
-    if (result[0] === undefined) return false;
-    Object.keys(result).forEach(function (key) {
-        table.push(Object.values(result[key]));
-    });
-    return table;
+    "SELECT * From Matches WHERE (player_1 = '" + player1 + "' AND player_2 = '" + player2 + "') OR (player_1 = '" + player2 + "' AND player_2 = '" + player1 + "') LIMIT 10";
+    try {
+        console.log("in get games");
+        const util = require('util');
+        const query = util.promisify(config.query).bind(config);
+        let match_id;
+        let winner_id;
+        let result = await query(getGames, [match_id, player1, player2, winner_id]);
+        console.log("result");
+        console.log(result);
+        var table = [];
+        if (result === undefined) return false;
+        console.log("before for each");
+        Object.keys(result).forEach(function (key) {
+            table.push({match_id: result[key].match_id, player1: result[key].player_1, player2: result[key].player_2, winner_id: result[key].winner_id});
+        });
+        console.log("table:");
+        console.log(table);
+        return table;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+    
+    
 }
 
 function getComments(gameID) {

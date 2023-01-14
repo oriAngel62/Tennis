@@ -18,7 +18,8 @@
             <tr>
                 <form action="/getGames" method="post" name="getGames" target="result">
                     <table>
-                        <tr>
+                        <div>for example: player1 - 104268, player2 - 104660</div>
+                        <tr> 
                             <td>Player1:</td>
                             <td><input type="text" name="Player1"></td>
                             <td>Player2:</td>
@@ -28,6 +29,7 @@
                     <input type="submit" value="Get">
                 </form>
             </tr>
+            <div id="result" class="unique"></div>
             <br>
             <br>
             <tr>
@@ -114,6 +116,6 @@
             </table>
         </form>
         <br>
-        <iframe name="result" frameborder="0" width="80%" height="500"></iframe>
+        <!-- <iframe name="result" frameborder="0" width="80%" height="500"></iframe> -->
     </body>
 </html>

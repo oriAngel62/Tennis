@@ -2,6 +2,10 @@ const { assert } = require("console");
 const express = require("express");
 const path = require("path");
 const doQueries = require("../model/doQueries.js");
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const dom = new JSDOM();
+
 
 const app = express();
 app.listen(3000);
@@ -84,20 +88,62 @@ app.get("/game", (req, res) => {
     res.sendFile(path.join(__dirname, "../public", "game.html"));
 });
 
+const tableify = require("html-tableify");
+function writeInHtml(data) {
+    return tableify(data);
+}
+
+
+       
+
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
-    let games = doQueries.getGames(player1, player2);
-    if (games === false) {
-        let result = writeInHtml("We have no information for this players");
-        res.write(result);
-        res.end();
-    } else {
-        let result = writeInHtml(games);
-        res.write(result);
-        res.end();
-    }
+    (async () => {
+        let games = await doQueries.getGames(player1, player2);
+        
+        if (games === false) {
+            let result = writeInHtml("We have no information for this players");
+            res.write(result);
+            res.end();
+        } else {
+            createTable(games);
+            res.end();
+        }
+    })();
 });
+
+
+function createTable(data) {
+    let table = document.createElement("table");
+    let thead = document.createElement("thead");
+    let tbody = document.createElement("tbody");
+    let headRow = document.createElement("tr");
+    let headCells = ["id", "player1", "player2", "winner"];
+    headCells.forEach(cell => {
+        let th = document.createElement("th");
+        th.innerText = cell;
+        headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    data.forEach(game => {
+        let row = document.createElement("tr");
+        let cells = [game.id, game.player1, game.player2, game.winner];
+        cells.forEach(cell => {
+            let td = document.createElement("td");
+            td.innerText = cell;
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    let result = document.getElementById("result");
+    result.appendChild(table);
+}
+
+
 
 app.post("/getComments", (req, res) => {
     let gameID = req.body.GameID;
