@@ -5,7 +5,7 @@ const config = syncSql.createConnection({
     user: "root",
     password: "1998",
     database: "tennisdb",
-    port: "3305",
+    port: "3306",
 });
 config.connect(function (err) {
     if (err) throw err;
