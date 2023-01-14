@@ -6,7 +6,6 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();
 
-
 const app = express();
 app.listen(3000);
 
@@ -47,41 +46,45 @@ app.post("/login", (req, res) => {
             res.write("Username or password are incorrect");
             res.end();
         }
-      })();
-      
-    
+    })();
 });
 
-app.post("/signUp", (req, res) => {
-    let userName = "'" + req.body.Username + "'";
-    let password = "'" + req.body.Password + "'";
-    let confirm = "'" + req.body.ConfirmPassword + "'";
-    let country = "'" + req.body.Country + "'";
-    let age = "'" + req.body.Age + "'";
-    let favorite = "'" + req.body.FavoritePlayer + "'";
-    let phone = "'" + req.body.PhoneNumber + "'";
+function randomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
+app.post("/signUp", (req, res) => {
+    let user_id = randomInteger(1, 100000);
+    let userName = req.body.Username;
+    let password = req.body.Password;
+    let confirm = req.body.ConfirmPassword;
+    let country = req.body.Country;
+    let age = req.body.Age;
+    let favorite = req.body.FavoritePlayer;
+    let phone = req.body.PhoneNumber;
     if (password !== confirm) {
         res.write("Passwords doesn't match! Please try again.");
         res.end();
     }
 
-    let message = doQueries.signUp(
-        userName,
-        password,
-        country,
-        age,
-        favorite,
-        phone
-    );
-    if (message === "Username already is use!") {
-        res.write(writeInHtml(message));
-        res.end();
-    }
-    if (message === "You are signed up!") {
-        //res.write("You are signed up! you can now return to the login screen.")
-        res.sendFile(path.join(__dirname, "../public", "login.html"));
-    }
+    let message = doQueries
+        .signUp(user_id, userName, password, country, age, favorite, phone)
+        .then((message) => {
+            console.log(message);
+            if (message === "Username already is use!") {
+                res.write(writeInHtml(message));
+                res.end();
+            }
+            if (message === "You are signed up!") {
+                //res.write("You are signed up! you can now return to the login screen.")
+                console.log("yes");
+                res.redirect("/login.html");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.end("Error Occured");
+        });
 });
 
 app.get("/game", (req, res) => {
@@ -93,15 +96,12 @@ function writeInHtml(data) {
     return tableify(data);
 }
 
-
-       
-
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
     (async () => {
         let games = await doQueries.getGames(player1, player2);
-        
+
         if (games === false) {
             let result = writeInHtml("We have no information for this players");
             res.write(result);
@@ -113,14 +113,13 @@ app.post("/getGames", (req, res) => {
     })();
 });
 
-
 function createTable(data) {
     let table = document.createElement("table");
     let thead = document.createElement("thead");
     let tbody = document.createElement("tbody");
     let headRow = document.createElement("tr");
     let headCells = ["id", "player1", "player2", "winner"];
-    headCells.forEach(cell => {
+    headCells.forEach((cell) => {
         let th = document.createElement("th");
         th.innerText = cell;
         headRow.appendChild(th);
@@ -128,10 +127,10 @@ function createTable(data) {
     thead.appendChild(headRow);
     table.appendChild(thead);
 
-    data.forEach(game => {
+    data.forEach((game) => {
         let row = document.createElement("tr");
         let cells = [game.id, game.player1, game.player2, game.winner];
-        cells.forEach(cell => {
+        cells.forEach((cell) => {
             let td = document.createElement("td");
             td.innerText = cell;
             row.appendChild(td);
@@ -142,8 +141,6 @@ function createTable(data) {
     let result = document.getElementById("result");
     result.appendChild(table);
 }
-
-
 
 app.post("/getComments", (req, res) => {
     let gameID = req.body.GameID;
@@ -226,8 +223,6 @@ app.post("/getTopCountries", (req, res) => {
         res.end();
     }
 });
-
-
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find((key) => object[key] === value);

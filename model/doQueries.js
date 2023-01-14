@@ -5,6 +5,7 @@ const config = syncSql.createConnection({
     user: "root",
     password: "1998",
     database: "tennisdb",
+    port: "3305",
 });
 config.connect(function (err) {
     if (err) throw err;
@@ -13,16 +14,20 @@ config.connect(function (err) {
 
 async function login(userName, password) {
     let loginQuery =
-        "SELECT user_name FROM user WHERE user_name = '" + userName +"' and password = '" + password+"'";
+        "SELECT user_name FROM user WHERE user_name = '" +
+        userName +
+        "' and password = '" +
+        password +
+        "'";
     try {
-        const util = require('util');
+        const util = require("util");
         const query = util.promisify(config.query).bind(config);
         let result = await query(loginQuery);
         if (result[0] === undefined) return null;
         let result_username = result[0].user_name;
-        if (userName === result_username){
+        if (userName === result_username) {
             return result[0];
-        } 
+        }
         return null;
     } catch {
         console.log("catch");
@@ -30,8 +35,8 @@ async function login(userName, password) {
     }
 }
 
-
-function signUp(
+async function signUp(
+    user_id,
     userName,
     password,
     country,
@@ -39,52 +44,68 @@ function signUp(
     favorite_player,
     phone_number
 ) {
-    let checkUserExist = `SELECT user_name FROM user WHERE user_name = ${userName}`;
-    config.query(checkUserExist, function (err, results, fields) {
-        if (err) throw err;
-        if (results.length > 0) return "Username already is use!";
-        let signUpQuery =
-            "INSERT INTO user(user_name, password, country, age, favorite_player, phone_number)" +
-            "VALUES (" +
-            userName +
-            "," +
-            password +
-            "," +
-            country +
-            "," +
-            age +
-            "," +
-            favorite_player +
-            "," +
-            phone_number +
-            ")";
-        try {
-            config.query(signUpQuery);
-            return "You are signed up!";
-        } catch (error) {
-            return false;
+    let loginQuery = "SELECT user_name FROM user WHERE user_name = ?";
+    try {
+        const util = require("util");
+        const query = util.promisify(config.query).bind(config);
+        let result = await query(loginQuery, [userName]);
+        console.log(result);
+        if (result.length > 0 && result[0].user_name === userName) {
+            return "Username already is use!";
         }
-    });
+        let signUpQuery =
+            "INSERT INTO user(user_id,user_name, password, country, age, favorite_player, phone_number) VALUES (?,?,?,?,?,?,?)";
+        await config.query(signUpQuery, [
+            user_id,
+            userName,
+            password,
+            country,
+            age,
+            favorite_player,
+            phone_number,
+        ]);
+        return "You are signed up!";
+    } catch (error) {
+        return false;
+    }
 }
 
 //Return the games
 async function getGames(player1, player2) {
     let getGames =
-    "SELECT * From Matches WHERE (player_1 = '" + player1 + "' AND player_2 = '" + player2 + "') OR (player_1 = '" + player2 + "' AND player_2 = '" + player1 + "') LIMIT 10";
+        "SELECT * From Matches WHERE (player_1 = '" +
+        player1 +
+        "' AND player_2 = '" +
+        player2 +
+        "') OR (player_1 = '" +
+        player2 +
+        "' AND player_2 = '" +
+        player1 +
+        "') LIMIT 10";
     try {
         console.log("in get games");
-        const util = require('util');
+        const util = require("util");
         const query = util.promisify(config.query).bind(config);
         let match_id;
         let winner_id;
-        let result = await query(getGames, [match_id, player1, player2, winner_id]);
+        let result = await query(getGames, [
+            match_id,
+            player1,
+            player2,
+            winner_id,
+        ]);
         console.log("result");
         console.log(result);
         var table = [];
         if (result === undefined) return false;
         console.log("before for each");
         Object.keys(result).forEach(function (key) {
-            table.push({match_id: result[key].match_id, player1: result[key].player_1, player2: result[key].player_2, winner_id: result[key].winner_id});
+            table.push({
+                match_id: result[key].match_id,
+                player1: result[key].player_1,
+                player2: result[key].player_2,
+                winner_id: result[key].winner_id,
+            });
         });
         console.log("table:");
         console.log(table);
@@ -93,8 +114,6 @@ async function getGames(player1, player2) {
         console.log(err);
         return null;
     }
-    
-    
 }
 
 function getComments(gameID) {
