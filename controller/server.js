@@ -18,6 +18,7 @@ app.use(
     })
 );
 global.globauser_id;
+global.globfavorite_player;
 app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
@@ -35,6 +36,7 @@ app.post("/login", (req, res) => {
         console.log(favorite_player);
         if (isLoggedIn != null) {
             global.globauser_id = isLoggedIn.user_id;
+            global.globfavorite_player = isLoggedIn.favorite_player;
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -235,29 +237,47 @@ app.post("/getCommonUsers", (req, res) => {
 });
 
 app.post("/getTopPlayers", (req, res) => {
-    let getTopPlayers = doQueries.getTopPlayers(getCookie("playerID"));
-    if (getTopPlayers === false) {
-        let result = writeInHtml("We have no information");
-        res.write(result);
-        res.end();
-    } else {
-        let result = writeInHtml(getTopPlayers);
-        res.write(result);
-        res.end();
-    }
+    doQueries
+        .getTopPlayers(global.globfavorite_player)
+        .then((commends) => {
+            if (commends === false) {
+                let result = writeInHtml("We have no information");
+                res.write(result);
+                res.end();
+            } else {
+                console.log(commends);
+                let result = writeInHtml(commends);
+                res.write(result);
+                res.end();
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.write("An error occurred while getting the favorite player");
+            res.end();
+        });
 });
 
 app.post("/getTopCountries", (req, res) => {
-    let favorite = doQueries.getTopCountries();
-    if (favorite === false) {
-        let result = writeInHtml("We have no information");
-        res.write(result);
-        res.end();
-    } else {
-        let result = writeInHtml(favorite);
-        res.write(result);
-        res.end();
-    }
+    doQueries
+        .getTopCountries()
+        .then((commends) => {
+            if (commends === false) {
+                let result = writeInHtml("We have no information");
+                res.write(result);
+                res.end();
+            } else {
+                console.log(commends);
+                let result = writeInHtml(commends);
+                res.write(result);
+                res.end();
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.write("An error occurred while getting the favorite player");
+            res.end();
+        });
 });
 
 function getKeyByValue(object, value) {

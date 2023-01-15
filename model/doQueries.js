@@ -186,12 +186,14 @@ async function getCommonUsers(first, last, height, hand, nationality) {
     return table;
 }
 
-function getTopPlayers(playerID) {
+async function getTopPlayers(playerID) {
     let getTopPlayer =
-        "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
-
+        "SELECT u.user_id, u.phone_number FROM User u JOIN ranking r1 ON u.favorite_player = r1.player_id JOIN ranking r2 ON r1.rank <= r2.rank AND r2.player_id = ?;";
+    const util = require("util");
+    const query = util.promisify(config.query).bind(config);
     var table = [];
-    var result = config.query(getTopPlayer);
+    var result = await query(getTopPlayer, [playerID]);
+    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
@@ -199,11 +201,14 @@ function getTopPlayers(playerID) {
     return table;
 }
 
-function getTopCountries() {
+async function getTopCountries() {
     let getTopCountries =
-        "SELECT player.country, COUNT(matches.winner_id) AS wins FROM matches JOIN player ON player.player_id = matches.winner_id GROUP BY player.country ORDER BY wins DESC LIMIT 10;";
+        "SELECT player.nationality, COUNT(matches.winner_id) AS wins FROM matches JOIN player ON player.player_id = matches.winner_id GROUP BY player.nationality ORDER BY wins DESC LIMIT 10;";
+    const util = require("util");
+    const query = util.promisify(config.query).bind(config);
     var table = [];
-    var result = config.query(getTopCountries);
+    var result = await query(getTopCountries);
+    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
