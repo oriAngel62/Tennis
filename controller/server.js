@@ -210,21 +210,28 @@ app.post("/getFavoritePlayer", (req, res) => {
 app.post("/getCommonUsers", (req, res) => {
     let first = req.body.PlayerFirstNameCommonUsers;
     let last = req.body.PlayerLastNameCommonUsers;
-
-    let height = req.body.Hieght;
-
-    let nationality = req.body.NationalityCommon;
-
-    let commends = doQueries.getCommonUsers(first, last, height, nationality);
-    if (commends === false) {
-        let result = writeInHtml("We have no information");
-        res.write(result);
-        res.end();
-    } else {
-        let result = writeInHtml(commends);
-        res.write(result);
-        res.end();
-    }
+    let height = req.body.Height;
+    let hand = req.body.Hand;
+    let nationality = req.body.NationalityCommonUser;
+    doQueries
+        .getCommonUsers(first, last, height, hand, nationality)
+        .then((commends) => {
+            if (commends === false) {
+                let result = writeInHtml("We have no information");
+                res.write(result);
+                res.end();
+            } else {
+                console.log(commends);
+                let result = writeInHtml(commends);
+                res.write(result);
+                res.end();
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.write("An error occurred while getting the favorite player");
+            res.end();
+        });
 });
 
 app.post("/getTopPlayers", (req, res) => {

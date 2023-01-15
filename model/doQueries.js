@@ -121,6 +121,8 @@ async function getComments(gameID) {
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
     var result = await query(getGames, [gameID]);
+    console.log(result);
+
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
@@ -157,23 +159,26 @@ async function getFavoritePlayer(player_id) {
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
     var result = await query(getPlayerName, [player_id]);
+    console.log(result[0]);
     if (result[0] === undefined) return false;
     return result;
 }
 
 //Return the games
-function getCommonUsers(first, last, height, hand, nationality) {
+async function getCommonUsers(first, last, height, hand, nationality) {
     let getCommonUsers =
-        "SELECT user_id, phone_number FROM User WHERE player_id = (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND nationallity = ? )";
-
+        "SELECT user_id, phone_number FROM user WHERE favorite_player in (SELECT player_id FROM Player WHERE first_name = ? AND last_name = ? AND hight = ? AND hand = ? AND nationality = ?);";
+    const util = require("util");
+    const query = util.promisify(config.query).bind(config);
     var table = [];
-    var result = config.query(getCommonUsers, [
+    var result = await query(getCommonUsers, [
         first,
         last,
         height,
         hand,
         nationality,
     ]);
+    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
