@@ -5,7 +5,7 @@ const config = syncSql.createConnection({
     user: "root",
     password: "1998",
     database: "tennisdb",
-    port: "3305",
+    port: "3306",
 });
 config.connect(function (err) {
     if (err) throw err;
@@ -13,7 +13,7 @@ config.connect(function (err) {
 });
 async function login(userName, password) {
     let loginQuery =
-        "SELECT user_name,user_id FROM user WHERE user_name = '" +
+        "SELECT user_name,user_id,favorite_player FROM user WHERE user_name = '" +
         userName +
         "' and password = '" +
         password +
@@ -151,18 +151,15 @@ async function insertComment(commentID, comment, user_id, match_id) {
 }
 
 //need to check how to write
-function getFavoritePlayer(username, favorite) {
-    let playerName = "SELECT player_name FROM User where user_name =?";
-    var table = [];
-    var result = config.query(getGames, [username]);
+async function getFavoritePlayer(player_id) {
+    let getPlayerName = "SELECT first_name,last_name FROM Player where player_id =?";
+    const util = require("util");
+    const query = util.promisify(config.query).bind(config);
+    var result = await query(getPlayerName, [player_id]);
     if (result[0] === undefined) return false;
-
-    let favoritrPlayer =
-        "SELECT * FROM player where player_name in (SELECT player_name FROM User where user_name =?)";
-    var result2 = config.query(getGames, [playerName]);
-
-    return result2;
+    return result;
 }
+
 
 //Return the games
 function getCommonUsers(first, last, height, hand, nationality) {
