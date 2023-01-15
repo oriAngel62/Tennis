@@ -1,7 +1,7 @@
 const { assert } = require("console");
 const express = require("express");
 const path = require("path");
-const doQueries = require("../model/doQueries1.js");
+const doQueries = require("../model/doQueries.js");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const dom = new JSDOM();

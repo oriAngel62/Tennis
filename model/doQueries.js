@@ -3,7 +3,7 @@ const syncSql = require("mysql");
 const config = syncSql.createConnection({
     host: "127.0.0.1",
     user: "root",
-    password: "adjkadh34@fS",
+    password: "1998",
     database: "tennisdb",
     port: "3306",
 });
@@ -126,16 +126,19 @@ async function getComments(gameID) {
         table.push(Object.values(result[key]));
     });
     return table;
-    
 }
 
 async function insertComment(matchId, comment) {
     let insertComment =
-        "INSERT INTO comments(match_id, user_id, comment) VALUES (?,?,?)"
+        "INSERT INTO comments(match_id, user_id, comment) VALUES (?,?,?)";
     try {
         const util = require("util");
         const query = util.promisify(config.query).bind(config);
-        var result = await query(insertComment,[matchId,document.cookie, comment]);
+        var result = await query(insertComment, [
+            matchId,
+            document.cookie,
+            comment,
+        ]);
         // config.query(insertComment);
         return "Succeeded";
     } catch (error) {
