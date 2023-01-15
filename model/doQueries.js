@@ -128,20 +128,22 @@ async function getComments(gameID) {
     return table;
 }
 
-async function insertComment(matchId, comment) {
+async function insertComment(commentID, comment, user_id, match_id) {
     let insertComment =
-        "INSERT INTO comments(match_id, user_id, comment) VALUES (?,?,?)";
+        "INSERT INTO comments(comment_id,comment,user_id,match_id) VALUES (?,?,?,?)";
     try {
         const util = require("util");
         const query = util.promisify(config.query).bind(config);
         var result = await query(insertComment, [
-            matchId,
-            document.cookie,
+            commentID,
             comment,
+            user_id,
+            match_id,
         ]);
         // config.query(insertComment);
         return "Succeeded";
     } catch (error) {
+        console.log(error);
         if (error.code === "ER_DUP_ENTRY") {
             return "not succeed";
         }

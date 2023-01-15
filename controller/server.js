@@ -17,7 +17,7 @@ app.use(
         extended: true,
     })
 );
-
+global.globauser_id;
 app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
@@ -34,7 +34,6 @@ app.post("/login", (req, res) => {
         console.log("favorite_player");
         console.log(favorite_player);
         if (isLoggedIn != null) {
- 
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -103,7 +102,6 @@ function writeInHtml(data) {
     return tableify(data);
 }
 
-
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
@@ -116,8 +114,9 @@ app.post("/getGames", (req, res) => {
             res.end();
         } else {
             try {
-                const html = tableTemplate({games: games});
-                res.send(html);
+                const html = tableTemplate({ games: games });
+                res.write(writeInHtml(html));
+                // res.send(html);
                 setTimeout(() => {
                     res.end();
                 }, 2000);
@@ -152,12 +151,10 @@ const tableTemplate = handlebars.compile(`
 </table>
 `);
 
-
-
-
-app.post("/getComments", (req, res) => {
+app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
-    let commends = doQueries.getComments(gameID);
+    let commends = await doQueries.getComments(gameID);
+    console.log(commends);
     if (commends === false) {
         let result = writeInHtml("We have no information for this game");
         res.write(result);
@@ -169,10 +166,16 @@ app.post("/getComments", (req, res) => {
     }
 });
 
-app.post("/insertComment", (req, res) => {
+app.post("/insertComment", async (req, res) => {
     let MatchID = req.body.MatchID;
     let Comment = req.body.Comment;
-    result = doQueries.insertComment(MatchID, Comment);
+    console.log(global.globauser_id);
+    let result = await doQueries.insertComment(
+        randomInteger(1, 100000),
+        Comment,
+        global.globauser_id,
+        MatchID
+    );
     let text = writeInHtml(result);
     res.write(text);
     res.end();
