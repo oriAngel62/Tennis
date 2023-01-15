@@ -3,8 +3,10 @@ const express = require("express");
 const path = require("path");
 const doQueries = require("../model/doQueries.js");
 const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+const { JSDOM } = require("jsdom");
 const dom = new JSDOM();
+const { document } = dom.window;
+const handlebars = require("handlebars");
 
 const app = express();
 app.listen(3000);
@@ -96,6 +98,7 @@ function writeInHtml(data) {
     return tableify(data);
 }
 
+
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
@@ -107,40 +110,73 @@ app.post("/getGames", (req, res) => {
             res.write(result);
             res.end();
         } else {
-            createTable(games);
-            res.end();
+            try {
+                const html = tableTemplate({games: games});
+                res.send(html);
+                setTimeout(() => {
+                    res.end();
+                }, 2000);
+            } catch (error) {
+                console.log(error);
+                res.end("An error occurred while creating the table");
+            }
         }
     })();
 });
 
+const tableTemplate = handlebars.compile(`
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>player1</th>
+            <th>player2</th>
+            <th>winner</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each games}}
+        <tr>
+            <td>{{match_id}}</td>
+            <td>{{player1}}</td>
+            <td>{{player2}}</td>
+            <td>{{winner_id}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+`);
+
+
+
 function createTable(data) {
     let table = document.createElement("table");
-    let thead = document.createElement("thead");
     let tbody = document.createElement("tbody");
-    let headRow = document.createElement("tr");
-    let headCells = ["id", "player1", "player2", "winner"];
-    headCells.forEach((cell) => {
-        let th = document.createElement("th");
-        th.innerText = cell;
-        headRow.appendChild(th);
-    });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
 
-    data.forEach((game) => {
+    data.forEach(game => {
         let row = document.createElement("tr");
-        let cells = [game.id, game.player1, game.player2, game.winner];
-        cells.forEach((cell) => {
+        let cells = [game.match_id, game.player1, game.player2, game.winner_id];
+        cells.forEach(cell => {
             let td = document.createElement("td");
             td.innerText = cell;
             row.appendChild(td);
         });
         tbody.appendChild(row);
     });
+
     table.appendChild(tbody);
-    let result = document.getElementById("result");
-    result.appendChild(table);
+    window.onload = function() {
+        let result = document.getElementById("result");
+        if (!result) {
+            console.log("result div not found!");
+        } else {
+            return table.outerHTML;
+        }
+    }
+      
 }
+
+
 
 app.post("/getComments", (req, res) => {
     let gameID = req.body.GameID;
