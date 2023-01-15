@@ -16,7 +16,7 @@ app.use(
         extended: true,
     })
 );
-
+global.globauser_id;
 app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
@@ -31,6 +31,7 @@ app.post("/login", (req, res) => {
         let isLoggedIn = await doQueries.login(userName, password);
         console.log(isLoggedIn);
         if (isLoggedIn != null) {
+            global.globauser_id = isLoggedIn.user_id;
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -98,7 +99,6 @@ function writeInHtml(data) {
     return tableify(data);
 }
 
-
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
@@ -111,8 +111,9 @@ app.post("/getGames", (req, res) => {
             res.end();
         } else {
             try {
-                const html = tableTemplate({games: games});
-                res.send(html);
+                const html = tableTemplate({ games: games });
+                res.write(writeInHtml(html));
+                // res.send(html);
                 setTimeout(() => {
                     res.end();
                 }, 2000);
@@ -147,16 +148,14 @@ const tableTemplate = handlebars.compile(`
 </table>
 `);
 
-
-
 function createTable(data) {
     let table = document.createElement("table");
     let tbody = document.createElement("tbody");
 
-    data.forEach(game => {
+    data.forEach((game) => {
         let row = document.createElement("tr");
         let cells = [game.match_id, game.player1, game.player2, game.winner_id];
-        cells.forEach(cell => {
+        cells.forEach((cell) => {
             let td = document.createElement("td");
             td.innerText = cell;
             row.appendChild(td);
@@ -165,22 +164,20 @@ function createTable(data) {
     });
 
     table.appendChild(tbody);
-    window.onload = function() {
+    window.onload = function () {
         let result = document.getElementById("result");
         if (!result) {
             console.log("result div not found!");
         } else {
             return table.outerHTML;
         }
-    }
-      
+    };
 }
 
-
-
-app.post("/getComments", (req, res) => {
+app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
-    let commends = doQueries.getComments(gameID);
+    let commends = await doQueries.getComments(gameID);
+    console.log(commends);
     if (commends === false) {
         let result = writeInHtml("We have no information for this game");
         res.write(result);
@@ -192,10 +189,16 @@ app.post("/getComments", (req, res) => {
     }
 });
 
-app.post("/insertComment", (req, res) => {
+app.post("/insertComment", async (req, res) => {
     let MatchID = req.body.MatchID;
     let Comment = req.body.Comment;
-    result = doQueries.insertComment(MatchID, Comment);
+    console.log(global.globauser_id);
+    let result = await doQueries.insertComment(
+        randomInteger(1, 100000),
+        Comment,
+        global.globauser_id,
+        MatchID
+    );
     let text = writeInHtml(result);
     res.write(text);
     res.end();
