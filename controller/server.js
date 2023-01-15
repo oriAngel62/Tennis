@@ -157,9 +157,9 @@ app.post("/getComments", (req, res) => {
 });
 
 app.post("/insertComment", (req, res) => {
-    let variant_id = req.body.variant_id;
-    let variant_name = req.body.variant_name;
-    result = doQueries.insertVariant(variant_id, variant_name);
+    let MatchID = req.body.MatchID;
+    let Comment = req.body.Comment;
+    result = doQueries.insertComment(MatchID, Comment);
     let text = writeInHtml(result);
     res.write(text);
     res.end();
