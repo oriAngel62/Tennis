@@ -30,10 +30,11 @@ app.post("/login", (req, res) => {
 
     (async () => {
         let isLoggedIn = await doQueries.login(userName, password);
-        favorite_player = isLoggedIn.favorite_player
+        favorite_player = isLoggedIn.favorite_player;
         console.log("favorite_player");
         console.log(favorite_player);
         if (isLoggedIn != null) {
+            global.globauser_id = isLoggedIn.user_id;
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -46,7 +47,7 @@ app.post("/login", (req, res) => {
                 maxAge: 900000,
                 httpOnly: true,
             });
-            
+
             res.sendFile(path.join(__dirname, "../public", "game.html"));
         } else {
             res.write("Username or password are incorrect");
@@ -182,26 +183,29 @@ app.post("/insertComment", async (req, res) => {
 });
 
 app.post("/getFavoritePlayer", (req, res) => {
-    doQueries.getFavoritePlayer(favorite_player)
-        .then(favorite => {
+    doQueries
+        .getFavoritePlayer(favorite_player)
+        .then((favorite) => {
             if (favorite === false) {
-                let result = writeInHtml("We have no information for this user");
+                let result = writeInHtml(
+                    "We have no information for this user"
+                );
                 res.write(result);
                 res.end();
             } else {
-                var my_favorite_player = favorite[0].first_name + " " + favorite[0].last_name
+                var my_favorite_player =
+                    favorite[0].first_name + " " + favorite[0].last_name;
                 let result = writeInHtml(my_favorite_player);
                 res.write(result);
                 res.end();
             }
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
             res.write("An error occurred while getting the favorite player");
             res.end();
         });
 });
-
 
 app.post("/getCommonUsers", (req, res) => {
     let first = req.body.PlayerFirstNameCommonUsers;

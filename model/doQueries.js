@@ -5,7 +5,7 @@ const config = syncSql.createConnection({
     user: "root",
     password: "1998",
     database: "tennisdb",
-    port: "3306",
+    port: "3305",
 });
 config.connect(function (err) {
     if (err) throw err;
@@ -152,14 +152,14 @@ async function insertComment(commentID, comment, user_id, match_id) {
 
 //need to check how to write
 async function getFavoritePlayer(player_id) {
-    let getPlayerName = "SELECT first_name,last_name FROM Player where player_id =?";
+    let getPlayerName =
+        "SELECT first_name,last_name FROM Player where player_id =?";
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
     var result = await query(getPlayerName, [player_id]);
     if (result[0] === undefined) return false;
     return result;
 }
-
 
 //Return the games
 function getCommonUsers(first, last, height, hand, nationality) {
