@@ -7,6 +7,7 @@ const { JSDOM } = require("jsdom");
 const dom = new JSDOM();
 const { document } = dom.window;
 const handlebars = require("handlebars");
+let favorite_player;
 
 const app = express();
 app.listen(3000);
@@ -29,8 +30,11 @@ app.post("/login", (req, res) => {
 
     (async () => {
         let isLoggedIn = await doQueries.login(userName, password);
-        console.log(isLoggedIn);
+        favorite_player = isLoggedIn.favorite_player
+        console.log("favorite_player");
+        console.log(favorite_player);
         if (isLoggedIn != null) {
+ 
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -39,10 +43,11 @@ app.post("/login", (req, res) => {
                 maxAge: 900000,
                 httpOnly: true,
             });
-            res.cookie("playerID", isLoggedIn.Favorite_player, {
+            res.cookie("playerID", isLoggedIn.favorite_player, {
                 maxAge: 900000,
                 httpOnly: true,
             });
+            
             res.sendFile(path.join(__dirname, "../public", "game.html"));
         } else {
             res.write("Username or password are incorrect");
@@ -149,34 +154,6 @@ const tableTemplate = handlebars.compile(`
 
 
 
-function createTable(data) {
-    let table = document.createElement("table");
-    let tbody = document.createElement("tbody");
-
-    data.forEach(game => {
-        let row = document.createElement("tr");
-        let cells = [game.match_id, game.player1, game.player2, game.winner_id];
-        cells.forEach(cell => {
-            let td = document.createElement("td");
-            td.innerText = cell;
-            row.appendChild(td);
-        });
-        tbody.appendChild(row);
-    });
-
-    table.appendChild(tbody);
-    window.onload = function() {
-        let result = document.getElementById("result");
-        if (!result) {
-            console.log("result div not found!");
-        } else {
-            return table.outerHTML;
-        }
-    }
-      
-}
-
-
 
 app.post("/getComments", (req, res) => {
     let gameID = req.body.GameID;
@@ -202,17 +179,26 @@ app.post("/insertComment", (req, res) => {
 });
 
 app.post("/getFavoritePlayer", (req, res) => {
-    let favorite = doQueries.getFavoritePlayer();
-    if (favorite === false) {
-        let result = writeInHtml("We have no information for this game");
-        res.write(result);
-        res.end();
-    } else {
-        let result = writeInHtml(favorite);
-        res.write(result);
-        res.end();
-    }
+    doQueries.getFavoritePlayer(favorite_player)
+        .then(favorite => {
+            if (favorite === false) {
+                let result = writeInHtml("We have no information for this user");
+                res.write(result);
+                res.end();
+            } else {
+                var my_favorite_player = favorite[0].first_name + " " + favorite[0].last_name
+                let result = writeInHtml(my_favorite_player);
+                res.write(result);
+                res.end();
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.write("An error occurred while getting the favorite player");
+            res.end();
+        });
 });
+
 
 app.post("/getCommonUsers", (req, res) => {
     let first = req.body.PlayerFirstNameCommonUsers;
