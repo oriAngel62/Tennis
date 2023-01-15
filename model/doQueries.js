@@ -3,7 +3,7 @@ const syncSql = require("mysql");
 const config = syncSql.createConnection({
     host: "127.0.0.1",
     user: "root",
-    password: "1998",
+    password: "adjkadh34@fS",
     database: "tennisdb",
     port: "3306",
 });
@@ -11,10 +11,9 @@ config.connect(function (err) {
     if (err) throw err;
     console.log("Connected to database as " + config.threadId);
 });
-
 async function login(userName, password) {
     let loginQuery =
-        "SELECT user_name FROM user WHERE user_name = '" +
+        "SELECT user_name,user_id FROM user WHERE user_name = '" +
         userName +
         "' and password = '" +
         password +
@@ -44,7 +43,7 @@ async function signUp(
     favorite_player,
     phone_number
 ) {
-    let loginQuery = "SELECT user_name FROM user WHERE user_name = ?";
+    let loginQuery = "SELECT user_name, user_id FROM user WHERE user_name = ?";
     try {
         const util = require("util");
         const query = util.promisify(config.query).bind(config);
@@ -116,29 +115,28 @@ async function getGames(player1, player2) {
     }
 }
 
-function getComments(gameID) {
+async function getComments(gameID) {
     let getGames = "SELECT user_id,comment From Comments WHERE match_id = ?";
     var table = [];
-    var result = config.query(getGames, [gameID]);
+    const util = require("util");
+    const query = util.promisify(config.query).bind(config);
+    var result = await query(getGames, [gameID]);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
     });
     return table;
+    
 }
 
-function insertComment(userName, userId, comment) {
+async function insertComment(matchId, comment) {
     let insertComment =
-        "INSERT INTO Comment(match_id, user_id, comment)" +
-        "VALUES (" +
-        userName +
-        "," +
-        userId +
-        "," +
-        comment +
-        ")";
+        "INSERT INTO comments(match_id, user_id, comment) VALUES (?,?,?)"
     try {
-        config.query(insertComment);
+        const util = require("util");
+        const query = util.promisify(config.query).bind(config);
+        var result = await query(insertComment,[matchId,document.cookie, comment]);
+        // config.query(insertComment);
         return "Succeeded";
     } catch (error) {
         if (error.code === "ER_DUP_ENTRY") {
