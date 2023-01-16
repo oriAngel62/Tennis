@@ -30,13 +30,24 @@ app.post("/login", (req, res) => {
     var password = req.body.Password;
 
     (async () => {
+        console.log("userName in login");
+        console.log(userName);
+        console.log("password in login");
+        console.log(password);
         let isLoggedIn = await doQueries.login(userName, password);
-        favorite_player = isLoggedIn.favorite_player;
-        console.log("favorite_player");
-        console.log(favorite_player);
+        // favorite_player = isLoggedIn.favorite_player;
+        console.log("isLoggedIn");
+        console.log(isLoggedIn);
         if (isLoggedIn != null) {
             global.globauser_id = isLoggedIn.user_id;
-            global.globfavorite_player = isLoggedIn.favorite_player;
+            console.log("globalfavorite_player before if");
+            console.log(global.globfavorite_player);
+            if(global.globfavorite_player === undefined){
+                global.globfavorite_player = isLoggedIn.favorite_player;
+            }
+
+            console.log("globalfavorite_player after if");
+            console.log(global.globfavorite_player);
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -69,7 +80,7 @@ app.post("/signUp", (req, res) => {
     let confirm = req.body.ConfirmPassword;
     let country = req.body.Country;
     let age = req.body.Age;
-    let favorite = req.body.FavoritePlayer;
+    global.globfavorite_player = req.body.FavoritePlayer;
     let phone = req.body.PhoneNumber;
     if (password !== confirm) {
         res.write("Passwords doesn't match! Please try again.");
@@ -77,7 +88,7 @@ app.post("/signUp", (req, res) => {
     }
 
     let message = doQueries
-        .signUp(user_id, userName, password, country, age, favorite, phone)
+        .signUp(user_id, userName, password, country, age, global.globfavorite_player, phone)
         .then((message) => {
             console.log(message);
             if (message === "Username already is use!") {
@@ -186,7 +197,7 @@ app.post("/insertComment", async (req, res) => {
 
 app.post("/getFavoritePlayer", (req, res) => {
     doQueries
-        .getFavoritePlayer(favorite_player)
+        .getFavoritePlayer(global.globfavorite_player)
         .then((favorite) => {
             if (favorite === false) {
                 let result = writeInHtml(

@@ -158,6 +158,8 @@ async function getFavoritePlayer(player_id) {
         "SELECT first_name,last_name FROM Player where player_id =?";
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
+    console.log("got player id:");
+    console.log(player_id)
     var result = await query(getPlayerName, [player_id]);
     console.log(result[0]);
     if (result[0] === undefined) return false;
