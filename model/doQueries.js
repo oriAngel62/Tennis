@@ -93,11 +93,8 @@ async function getGames(player1, player2) {
             player2,
             winner_id,
         ]);
-        console.log("result");
-        console.log(result);
         var table = [];
         if (result === undefined) return false;
-        console.log("before for each");
         Object.keys(result).forEach(function (key) {
             table.push({
                 match_id: result[key].match_id,
@@ -106,8 +103,6 @@ async function getGames(player1, player2) {
                 winner_id: result[key].winner_id,
             });
         });
-        console.log("table:");
-        console.log(table);
         return table;
     } catch (err) {
         console.log(err);

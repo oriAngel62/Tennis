@@ -128,7 +128,7 @@ app.post("/getGames", (req, res) => {
             res.end();
         } else {
             try {
-                const html = tableTemplate({ games: games });
+                const html = tableTemplateGames({ games: games });
                 res.write(writeInHtml(html));
                 // res.send(html);
                 setTimeout(() => {
@@ -142,7 +142,7 @@ app.post("/getGames", (req, res) => {
     })();
 });
 
-const tableTemplate = handlebars.compile(`
+const tableTemplateGames = handlebars.compile(`
 <table>
     <thead>
         <tr>
@@ -164,6 +164,26 @@ const tableTemplate = handlebars.compile(`
     </tbody>
 </table>
 `);
+
+const tableTemplateCountries = handlebars.compile(`
+<table>
+    <thead>
+        <tr>
+            <th>Country</th>
+            <th>Wins</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each countries}}
+            <tr>
+                <td>{{this.[0]}}</td>
+                <td>{{this.[1]}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+`);
+
 
 app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
@@ -271,25 +291,33 @@ app.post("/getTopPlayers", (req, res) => {
 
 app.post("/getTopCountries", (req, res) => {
     doQueries
-        .getTopCountries()
-        .then((commends) => {
-            if (commends === false) {
-                let result = writeInHtml("We have no information");
-                res.write(result);
-                res.end();
-            } else {
-                console.log(commends);
-                let result = writeInHtml(commends);
-                res.write(result);
-                res.end();
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            res.write("An error occurred while getting the favorite player");
-            res.end();
-        });
-});
+    .getTopCountries()
+    .then((countries) => {
+    if (countries === false) {
+    let result = writeInHtml("We have no information");
+    res.write(result);
+    res.end();
+    } else {
+    try {
+        console.log("countries:");
+        console.log(countries)
+    const html = tableTemplateCountries({ countries: countries });
+    res.write(writeInHtml(html));
+    setTimeout(() => {
+    res.end();
+    }, 2000);
+    } catch (error) {
+    console.log(error);
+    res.end("An error occurred while creating the table");
+    }
+    }
+    })
+    .catch((err) => {
+    console.log(err);
+    res.write("An error occurred while getting the top countries");
+    res.end();
+    });
+    });
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find((key) => object[key] === value);
