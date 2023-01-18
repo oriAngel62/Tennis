@@ -48,7 +48,6 @@ async function signUp(
         const util = require("util");
         const query = util.promisify(config.query).bind(config);
         let result = await query(loginQuery, [userName]);
-        console.log(result);
         if (result.length > 0 && result[0].user_name === userName) {
             return "Username already is use!";
         }
@@ -82,7 +81,6 @@ async function getGames(player1, player2) {
         player1 +
         "') LIMIT 10";
     try {
-        console.log("in get games");
         const util = require("util");
         const query = util.promisify(config.query).bind(config);
         let match_id;
@@ -116,8 +114,6 @@ async function getComments(gameID) {
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
     var result = await query(getGames, [gameID]);
-    console.log(result);
-
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
@@ -153,10 +149,7 @@ async function getFavoritePlayer(player_id) {
         "SELECT first_name,last_name FROM Player where player_id =?";
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
-    console.log("got player id:");
-    console.log(player_id);
     var result = await query(getPlayerName, [player_id]);
-    console.log(result[0]);
     if (result[0] === undefined) return false;
     return result;
 }
@@ -175,8 +168,6 @@ async function getCommonUsers(first, last, height, hand, nationality) {
         hand,
         nationality,
     ]);
-    console.log("Users111:");
-    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
@@ -191,7 +182,6 @@ async function getTopPlayers(playerID) {
     const query = util.promisify(config.query).bind(config);
     var table = [];
     var result = await query(getTopPlayer, [playerID]);
-    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));
@@ -206,7 +196,6 @@ async function getTopCountries() {
     const query = util.promisify(config.query).bind(config);
     var table = [];
     var result = await query(getTopCountries);
-    console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
         table.push(Object.values(result[key]));

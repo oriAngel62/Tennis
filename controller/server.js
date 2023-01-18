@@ -30,24 +30,13 @@ app.post("/login", (req, res) => {
     var password = req.body.Password;
 
     (async () => {
-        console.log("userName in login");
-        console.log(userName);
-        console.log("password in login");
-        console.log(password);
         let isLoggedIn = await doQueries.login(userName, password);
         // favorite_player = isLoggedIn.favorite_player;
-        console.log("isLoggedIn");
-        console.log(isLoggedIn);
         if (isLoggedIn != null) {
             global.globauser_id = isLoggedIn.user_id;
-            console.log("globalfavorite_player before if");
-            console.log(global.globfavorite_player);
             if (global.globfavorite_player === undefined) {
                 global.globfavorite_player = isLoggedIn.favorite_player;
             }
-
-            console.log("globalfavorite_player after if");
-            console.log(global.globfavorite_player);
             res.cookie("username", isLoggedIn.user_name, {
                 maxAge: 900000,
                 httpOnly: true,
@@ -113,14 +102,11 @@ app.post("/signUp", (req, res) => {
             phone
         )
         .then((message) => {
-            console.log(message);
             if (message === "Username already is use!") {
                 res.write(writeInHtml(message));
                 res.end();
             }
             if (message === "You are signed up!") {
-                //res.write("You are signed up! you can now return to the login screen.")
-                console.log("yes");
                 res.redirect("/login.html");
             }
         })
@@ -294,6 +280,7 @@ app.post("/getFavoritePlayer", (req, res) => {
     doQueries
         .getFavoritePlayer(global.globfavorite_player)
         .then((favorite) => {
+            console.log(favorite)
             if (favorite === false) {
                 let result = writeInHtml(
                     "We have no information for this player"
@@ -335,8 +322,6 @@ app.post("/getCommonUsers", (req, res) => {
                 res.end();
             } else {
                 try {
-                    console.log("Users:");
-                    console.log(users);
                     const html = tableTemplateUsers({ users: users });
                     res.write(writeInHtml(html));
                     setTimeout(() => {
@@ -365,8 +350,6 @@ app.post("/getTopPlayers", (req, res) => {
                 res.end();
             } else {
                 try {
-                    console.log("users:");
-                    console.log(users);
                     const html = tableTemplateUsers({ users: users });
                     res.write(writeInHtml(html));
                     setTimeout(() => {
@@ -395,8 +378,6 @@ app.post("/getTopCountries", (req, res) => {
                 res.end();
             } else {
                 try {
-                    console.log("countries:");
-                    console.log(countries);
                     const html = tableTemplateCountries({
                         countries: countries,
                     });
