@@ -184,6 +184,25 @@ const tableTemplateCountries = handlebars.compile(`
 </table>
 `);
 
+const tableTemplateUsers = handlebars.compile(`
+<table>
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Phone number</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each users}}
+            <tr>
+                <td>{{this.[0]}}</td>
+                <td>{{this.[1]}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+`);
+
 
 app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
@@ -270,24 +289,35 @@ app.post("/getCommonUsers", (req, res) => {
 app.post("/getTopPlayers", (req, res) => {
     doQueries
         .getTopPlayers(global.globfavorite_player)
-        .then((commends) => {
-            if (commends === false) {
+        .then((users) => {
+            if (users === false) {
                 let result = writeInHtml("We have no information");
                 res.write(result);
                 res.end();
             } else {
-                console.log(commends);
-                let result = writeInHtml(commends);
-                res.write(result);
-                res.end();
+                try {
+                    console.log("users:");
+                    console.log(users)
+                    const html = tableTemplateUsers({ users: users });
+                    res.write(writeInHtml(html));
+                    setTimeout(() => {
+                        res.end();
+                    }, 2000);
+                } catch (error) {
+                    console.log(error);
+                    res.end("An error occurred while creating the table");
+                }
             }
         })
         .catch((err) => {
             console.log(err);
-            res.write("An error occurred while getting the favorite player");
-            res.end();
-        });
-});
+            res.write("An error occurred while getting the top countries");
+    res.end();
+    });
+    });
+
+           
+
 
 app.post("/getTopCountries", (req, res) => {
     doQueries
