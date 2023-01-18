@@ -39,7 +39,8 @@
                 <form action="/getComments" method="post" name="getComments" target="result">
                     <table>
                         <tr>
-                            <td>Match id: (for example: 2015-1536)</td>
+                            <td>Match id:</td>
+                            <div>for example: match id - 2015-1536</div>
                             <td><input type="text" name="GameID"></td>
                         </tr>      
                     </table>
@@ -53,6 +54,7 @@
             <tr>
                 <form action="/insertComment " method="post" name="insertComment" target="result">
                     <table>
+                        <div>for example: match id - 2015-1536, comment - great game</div>
                         <tr>
                             <td>Match id:</td>
                             <td><input type="text" name="MatchID"></td>
@@ -73,14 +75,15 @@
                 </form>
             </tr>
             <br>
-            <td><b>Find Users With The Same Favorite Player As You (you can call them): (Gardnar Mulloy 185 R USA) </b></td>
+            <td><b>Get Users by thier favorite player match: (Gardnar Mulloy 185 R USA) </b></td>
+            <div>for example: first name - Gardnar, last name - Mulloy, height - 185, hand - R, nationality - USA</div>
             <tr>
                 <form action="/getCommonUsers" method="post" name="getCommonUsers" target="result">
                     <table>
                         <tr>
-                            <td>Player First Name:</td>
+                            <td>First Name:</td>
                             <td><input type="text" name="PlayerFirstNameCommonUsers"></td>
-                            <td>Player Last Name:</td>
+                            <td>Last Name:</td>
                             <td><input type="text" name="PlayerLastNameCommonUsers"></td>
                             <td>Height:</td>
                             <td><input type="text" name="Height"></td>

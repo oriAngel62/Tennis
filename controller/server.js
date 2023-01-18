@@ -42,7 +42,7 @@ app.post("/login", (req, res) => {
             global.globauser_id = isLoggedIn.user_id;
             console.log("globalfavorite_player before if");
             console.log(global.globfavorite_player);
-            if(global.globfavorite_player === undefined){
+            if (global.globfavorite_player === undefined) {
                 global.globfavorite_player = isLoggedIn.favorite_player;
             }
 
@@ -72,6 +72,18 @@ app.post("/login", (req, res) => {
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+function checkingMissingValues(val, res) {
+    const values = Object.values(val);
+    const isMissingValue = values.some(
+        (value) => typeof value === "undefined" || value.length === 0
+    );
+    if (isMissingValue) {
+        res.write("Missing Values");
+        res.end();
+        return true;
+    }
+    return false;
+}
 
 app.post("/signUp", (req, res) => {
     let user_id = randomInteger(1, 100000);
@@ -80,6 +92,9 @@ app.post("/signUp", (req, res) => {
     let confirm = req.body.ConfirmPassword;
     let country = req.body.Country;
     let age = req.body.Age;
+    if (checkingMissingValues(req.body, res)) {
+        return;
+    }
     global.globfavorite_player = req.body.FavoritePlayer;
     let phone = req.body.PhoneNumber;
     if (password !== confirm) {
@@ -88,7 +103,15 @@ app.post("/signUp", (req, res) => {
     }
 
     let message = doQueries
-        .signUp(user_id, userName, password, country, age, global.globfavorite_player, phone)
+        .signUp(
+            user_id,
+            userName,
+            password,
+            country,
+            age,
+            global.globfavorite_player,
+            phone
+        )
         .then((message) => {
             console.log(message);
             if (message === "Username already is use!") {
@@ -119,6 +142,9 @@ function writeInHtml(data) {
 app.post("/getGames", (req, res) => {
     let player1 = req.body.Player1;
     let player2 = req.body.Player2;
+    if (checkingMissingValues(req.body, res)) {
+        return;
+    }
     (async () => {
         let games = await doQueries.getGames(player1, player2);
 
@@ -203,9 +229,11 @@ const tableTemplateUsers = handlebars.compile(`
 </table>
 `);
 
-
 app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
+    if (checkingMissingValues(req.body, res)) {
+        return;
+    }
     let commends = await doQueries.getComments(gameID);
     console.log(commends);
     if (commends === false) {
@@ -222,7 +250,9 @@ app.post("/getComments", async (req, res) => {
 app.post("/insertComment", async (req, res) => {
     let MatchID = req.body.MatchID;
     let Comment = req.body.Comment;
-    console.log(global.globauser_id);
+    if (checkingMissingValues(req.body, res)) {
+        return;
+    }
     let result = await doQueries.insertComment(
         randomInteger(1, 100000),
         Comment,
@@ -265,17 +295,22 @@ app.post("/getCommonUsers", (req, res) => {
     let height = req.body.Height;
     let hand = req.body.Hand;
     let nationality = req.body.NationalityCommonUser;
+    if (checkingMissingValues(req.body, res)) {
+        return;
+    }
     doQueries
         .getCommonUsers(first, last, height, hand, nationality)
         .then((users) => {
             if (users === false) {
-                let result = writeInHtml("We have no information for the provided player's information.");
+                let result = writeInHtml(
+                    "We have no information for the provided player's information."
+                );
                 res.write(result);
                 res.end();
             } else {
                 try {
                     console.log("Users:");
-                    console.log(users)
+                    console.log(users);
                     const html = tableTemplateUsers({ users: users });
                     res.write(writeInHtml(html));
                     setTimeout(() => {
@@ -294,7 +329,6 @@ app.post("/getCommonUsers", (req, res) => {
         });
 });
 
-
 app.post("/getTopPlayers", (req, res) => {
     doQueries
         .getTopPlayers(global.globfavorite_player)
@@ -306,7 +340,7 @@ app.post("/getTopPlayers", (req, res) => {
             } else {
                 try {
                     console.log("users:");
-                    console.log(users)
+                    console.log(users);
                     const html = tableTemplateUsers({ users: users });
                     res.write(writeInHtml(html));
                     setTimeout(() => {
@@ -321,64 +355,45 @@ app.post("/getTopPlayers", (req, res) => {
         .catch((err) => {
             console.log(err);
             res.write("An error occurred while getting the top countries");
-    res.end();
-    });
-    });
-
-           
-
+            res.end();
+        });
+});
 
 app.post("/getTopCountries", (req, res) => {
     doQueries
-    .getTopCountries()
-    .then((countries) => {
-    if (countries === false) {
-    let result = writeInHtml("We have no information");
-    res.write(result);
-    res.end();
-    } else {
-    try {
-        console.log("countries:");
-        console.log(countries)
-    const html = tableTemplateCountries({ countries: countries });
-    res.write(writeInHtml(html));
-    setTimeout(() => {
-    res.end();
-    }, 2000);
-    } catch (error) {
-    console.log(error);
-    res.end("An error occurred while creating the table");
-    }
-    }
-    })
-    .catch((err) => {
-    console.log(err);
-    res.write("An error occurred while getting the top countries");
-    res.end();
-    });
-    });
-
-function getKeyByValue(object, value) {
-    return Object.keys(object).find((key) => object[key] === value);
-}
+        .getTopCountries()
+        .then((countries) => {
+            if (countries === false) {
+                let result = writeInHtml("We have no information");
+                res.write(result);
+                res.end();
+            } else {
+                try {
+                    console.log("countries:");
+                    console.log(countries);
+                    const html = tableTemplateCountries({
+                        countries: countries,
+                    });
+                    res.write(writeInHtml(html));
+                    setTimeout(() => {
+                        res.end();
+                    }, 2000);
+                } catch (error) {
+                    console.log(error);
+                    res.end("An error occurred while creating the table");
+                }
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.write("An error occurred while getting the top countries");
+            res.end();
+        });
+});
 
 function writeInHtml(text) {
     result =
         `<p style="font-size:30px; font-family:'verdana';">` + text + `</p>`;
     return result;
 }
-function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(";");
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == " ") {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
+
