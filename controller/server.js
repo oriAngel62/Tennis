@@ -229,23 +229,49 @@ const tableTemplateUsers = handlebars.compile(`
 </table>
 `);
 
+const tableTemplateComments = handlebars.compile(`
+<table>
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each comments}}
+            <tr>
+                <td>{{this.[0]}}</td>
+                <td>{{this.[1]}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+`);
+
 app.post("/getComments", async (req, res) => {
     let gameID = req.body.GameID;
     if (checkingMissingValues(req.body, res)) {
         return;
     }
-    let commends = await doQueries.getComments(gameID);
-    console.log(commends);
-    if (commends === false) {
+    let comments = await doQueries.getComments(gameID);
+    if (comments === false) {
         let result = writeInHtml("We have no information for this game");
         res.write(result);
         res.end();
     } else {
-        let result = writeInHtml(commends);
-        res.write(result);
-        res.end();
+        try {
+            const html = tableTemplateComments({ comments: comments });
+            res.write(writeInHtml(html));
+            setTimeout(() => {
+                res.end();
+            }, 2000);
+        } catch (error) {
+            console.log(error);
+            res.end("An error occurred while creating the table");
+        }
     }
 });
+
 
 app.post("/insertComment", async (req, res) => {
     let MatchID = req.body.MatchID;

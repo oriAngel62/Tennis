@@ -186,7 +186,7 @@ async function getCommonUsers(first, last, height, hand, nationality) {
 
 async function getTopPlayers(playerID) {
     let getTopPlayer =
-        "SELECT u.user_id, u.phone_number FROM User u JOIN ranking r1 ON u.favorite_player = r1.player_id JOIN ranking r2 ON r1.rank <= r2.rank AND r2.player_id = ?;";
+        "SELECT u.user_id, u.phone_number FROM User u JOIN ranking r1 ON u.favorite_player = r1.player_id JOIN ranking r2 ON r1.rank < r2.rank AND r2.player_id = ?;";
     const util = require("util");
     const query = util.promisify(config.query).bind(config);
     var table = [];
