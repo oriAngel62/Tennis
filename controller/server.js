@@ -240,7 +240,7 @@ app.post("/getFavoritePlayer", (req, res) => {
         .then((favorite) => {
             if (favorite === false) {
                 let result = writeInHtml(
-                    "We have no information for this user"
+                    "We have no information for this player"
                 );
                 res.write(result);
                 res.end();
@@ -267,24 +267,33 @@ app.post("/getCommonUsers", (req, res) => {
     let nationality = req.body.NationalityCommonUser;
     doQueries
         .getCommonUsers(first, last, height, hand, nationality)
-        .then((commends) => {
-            if (commends === false) {
-                let result = writeInHtml("We have no information");
+        .then((users) => {
+            if (users === false) {
+                let result = writeInHtml("We have no information for the provided player's information.");
                 res.write(result);
                 res.end();
             } else {
-                console.log(commends);
-                let result = writeInHtml(commends);
-                res.write(result);
-                res.end();
+                try {
+                    console.log("Users:");
+                    console.log(users)
+                    const html = tableTemplateUsers({ users: users });
+                    res.write(writeInHtml(html));
+                    setTimeout(() => {
+                        res.end();
+                    }, 2000);
+                } catch (error) {
+                    console.log(error);
+                    res.end("An error occurred while creating the table");
+                }
             }
         })
         .catch((err) => {
             console.log(err);
-            res.write("An error occurred while getting the favorite player");
+            res.write("An error occurred while getting the common users");
             res.end();
         });
 });
+
 
 app.post("/getTopPlayers", (req, res) => {
     doQueries

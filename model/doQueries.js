@@ -175,6 +175,7 @@ async function getCommonUsers(first, last, height, hand, nationality) {
         hand,
         nationality,
     ]);
+    console.log("Users111:");
     console.log(result);
     if (result[0] === undefined) return false;
     Object.keys(result).forEach(function (key) {
